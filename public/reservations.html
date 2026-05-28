@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
-    <script defer src="js/dashboard-pages.js"></script>
+    <script type="module" defer src="js/dashboard.js"></script>
   </head>
   <body class="dashboard-body text-slate-900" data-page="reservations">
     <div id="appShell" class="dashboard-shell">
@@ -131,11 +131,17 @@
                   <thead class="bg-slate-50">
                     <tr>
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">ID</th>
+                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Timestamp</th>
+                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Fullname</th>
+                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Contact No.</th>
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Facility</th>
-                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">User</th>
-                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Date</th>
-                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Time</th>
+                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">purpose</th>
+                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Date of use</th>
+                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Start Time</th>
+                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">End Time</th>
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Status</th>
+                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Conflict check</th>
+                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Control number</th>
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Actions</th>
                     </tr>
                   </thead>
@@ -161,6 +167,10 @@
         <input id="newResName" type="text" placeholder="e.g. Juan Dela Cruz" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
       </div>
       <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Contact</label>
+        <input id="newResContact" type="text" placeholder="e.g. 09123456789" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+      </div>
+      <div>
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Facility</label>
         <select id="newResFacility" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
           <option value="Conference Room A">Conference Room A</option>
@@ -168,6 +178,10 @@
           <option value="Meeting Room B">Meeting Room B</option>
           <option value="Auditorium">Auditorium</option>
         </select>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">purpose</label>
+        <input id="newResContact" type="text" placeholder="e.g. 09123456789" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
       </div>
       <div>
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Date of Use</label>
@@ -191,6 +205,10 @@
           <option value="Completed">Approved for payment</option>
           <option value="Cancelled">Rejected</option>
         </select>
+      </div>
+       <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Control Number</label>
+        <input id="newResControlNumber" type="text" placeholder=" LGU-05262026-001" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
       </div>
     </div>
 

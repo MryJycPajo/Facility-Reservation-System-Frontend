@@ -1,128 +1,94 @@
-async function fetchJson(path) {
-  const res = await fetch(path);
-  if (!res.ok) throw new Error('Network error');
-  return res.json();
-}
+import { renderOverviewCharts } from './charts.js';
+import { initFacilitiesPage } from './facilities.js';
+import { initReservationsPage } from './reservations.js';
+import { initUsersPage } from './users.js';
+import { formatDate } from './utils.js';
 
-function formatCurrency(v) {
-  return '$' + (v / 1000 >= 1 ? (v / 1000).toFixed(1) + 'K' : v);
-}
+export function setCurrentDate() {
+  const currentDate = document.getElementById('currentDate');
 
-async function initDashboard() {
-  const totalReservationsEl = document.getElementById('totalReservations');
-  if (!totalReservationsEl) {
-    return;
-  }
-
-  try {
-    const [ov, trends, rev, status] = await Promise.all([
-      fetchJson('/api/overview'),
-      fetchJson('/api/trends'),
-      fetchJson('/api/revenue'),
-      fetchJson('/api/status')
-    ]);
-
-    totalReservationsEl.textContent = ov.totalReservations;
-    document.getElementById('activeFacilities').textContent = ov.activeFacilities;
-    document.getElementById('totalUsers').textContent = ov.totalUsers.toLocaleString();
-    document.getElementById('revenueMTD').textContent = formatCurrency(ov.revenueMTD);
-
-    document.getElementById('quickCompleted').textContent = ov.quickStats.completed;
-    document.getElementById('quickPending').textContent = ov.quickStats.pending;
-    document.getElementById('quickConfirmed').textContent = ov.quickStats.confirmed;
-    document.getElementById('quickCancelled').textContent = ov.quickStats.cancelled;
-
-    const ctx1 = document.getElementById('reservationsChart').getContext('2d');
-    new Chart(ctx1, {
-      type: 'line',
-      data: {
-        labels: trends.months,
-        datasets: [{
-          label: 'reservations',
-          data: trends.reservations,
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59,130,246,0.06)',
-          tension: 0.3,
-          fill: true
-        }]
-      },
-      options: { responsive: true, plugins: { legend: { display: false } } }
-    });
-
-    const ctx2 = document.getElementById('revenueChart').getContext('2d');
-    new Chart(ctx2, {
-      type: 'bar',
-      data: {
-        labels: rev.months,
-        datasets: [{
-          label: 'revenue',
-          data: rev.revenue,
-          backgroundColor: '#10b981'
-        }]
-      },
-      options: { responsive: true, plugins: { legend: { display: false } } }
-    });
-
-    const ctx3 = document.getElementById('statusChart').getContext('2d');
-    new Chart(ctx3, {
-      type: 'pie',
-      data: {
-        labels: status.labels,
-        datasets: [{
-          data: status.counts,
-          backgroundColor: ['#6366f1', '#f59e0b', '#34d399', '#ef4444']
-        }]
-      },
-      options: { responsive: true }
-    });
-
-  } catch (err) {
-    console.error(err);
+  if (currentDate) {
+    currentDate.textContent = formatDate(new Date());
   }
 }
 
-function initSignupForm() {
-  const signupForm = document.getElementById('signupForm');
-  if (!signupForm) {
-    return;
-  }
+export function setActiveNav() {
+  const page = document.body.dataset.page;
 
-  const formMessage = document.getElementById('formMessage');
-
-  signupForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-
-    const fullName = document.getElementById('fullName').value.trim();
-    const emailAddress = document.getElementById('emailAddress').value.trim();
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-
-    if (!fullName || !emailAddress || !username || !password || !confirmPassword) {
-      formMessage.textContent = 'Please complete all required fields.';
-      formMessage.style.color = '#fcd34d';
-      return;
-    }
-
-    if (password.length < 8) {
-      formMessage.textContent = 'Password must be at least 8 characters long.';
-      formMessage.style.color = '#fcd34d';
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      formMessage.textContent = 'Passwords do not match.';
-      formMessage.style.color = '#fca5a5';
-      return;
-    }
-
-    formMessage.textContent = 'Account details look good. Connect this form to your backend signup endpoint next.';
-    formMessage.style.color = '#bbf7d0';
-    signupForm.reset();
+  document.querySelectorAll('[data-nav-link]').forEach((link) => {
+    link.classList.toggle('is-active', link.dataset.navLink === page);
   });
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  initDashboard();
-  initSignupForm();
-});
+export function initSidebarControls() {
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+  const sidebarFooter = document.querySelector('#sidebar .border-t.border-slate-200.p-5');
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', () => {
+      document.body.classList.add('sidebar-open');
+    });
+  }
+
+  if (sidebarBackdrop) {
+    sidebarBackdrop.addEventListener('click', () => {
+      document.body.classList.remove('sidebar-open');
+    });
+  }
+
+  if (sidebarFooter && !sidebarFooter.querySelector('[data-logout-link]')) {
+    const logoutLink = document.createElement('a');
+    logoutLink.href = 'login.html';
+    logoutLink.dataset.logoutLink = 'true';
+    logoutLink.className = 'dashboard-logout mt-4';
+    logoutLink.style.width = '100%';
+    logoutLink.textContent = 'Logout';
+    sidebarFooter.appendChild(logoutLink);
+  }
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1024) {
+      document.body.classList.remove('sidebar-open');
+    }
+  });
+}
+
+export function initSettingsAction() {
+  const saveButton = document.getElementById('saveSettingsButton');
+  const settingsStatus = document.getElementById('settingsStatus');
+
+  if (!saveButton || !settingsStatus) return;
+
+  saveButton.addEventListener('click', () => {
+    settingsStatus.textContent = 'Settings saved locally. Connect this action to your backend endpoint when ready.';
+    settingsStatus.classList.remove('text-slate-500');
+    settingsStatus.classList.add('text-emerald-600');
+  });
+}
+
+export function initPage() {
+  setCurrentDate();
+  setActiveNav();
+  initSidebarControls();
+  initSettingsAction();
+  initReservationsPage();
+  initFacilitiesPage();
+  initUsersPage();
+  renderOverviewCharts();
+
+  const pageTitle = document.getElementById('pageTitle');
+  if (pageTitle) {
+    const titles = {
+      dashboard: 'Dashboard Overview',
+      reservations: 'Reservation Management',
+      facilities: 'Facility Management',
+      users: 'User Management',
+      settings: 'System Settings',
+    };
+
+    pageTitle.textContent = titles[document.body.dataset.page] || pageTitle.textContent;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', initPage);

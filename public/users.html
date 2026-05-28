@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
-    <script defer src="js/dashboard-pages.js"></script>
+    <script type="module" defer src="js/dashboard.js"></script>
   </head>
   <body class="dashboard-body text-slate-900" data-page="users">
     <div id="appShell" class="dashboard-shell">
@@ -186,7 +186,8 @@
       <div>
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">User Type</label>
         <select id="newUserType" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-          <option value="User">User</option>
+          <option value="">Select User Type</option>
+          <option value="Collecting Officer">Collecting Officer</option>
           <option value="Admin">Admin</option>
         </select>
       </div>

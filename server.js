@@ -1,6 +1,23 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const mysql = require('mysql2');
+
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'LGUbatuan1990',
+  database: 'facility_reservation_db'
+});
+
+db.connect((err) => {
+  if (err) {
+    console.error('Database connection failed:', err);
+    return;
+  }
+
+  console.log('Connected to MySQL');
+});
 
 const app = express();
 app.use(cors());
@@ -9,11 +26,6 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
-
-const ADMIN_CREDENTIALS = {
-  username: 'admin',
-  password: 'admin123'
-};
 
 // Sample data
 const overview = {
@@ -60,14 +72,27 @@ app.get('/api/status', (req, res) => {
   res.json(statusDistribution);
 });
 
-app.post('/api/login', (req, res) => {
-  const { username, password } = req.body;
+ app.post('/api/login', (req, res) => {
+  const { user_name, password } = req.body;
 
-  if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-    return res.json({ success: true, message: 'Login successful' });
+  // HARD CODED ADMIN LOGIN
+  if (user_name === 'admin' && password === 'admin123') {
+    return res.json({
+      success: true,
+      message: 'Login successful',
+      user: {
+        id: 1,
+        name: 'Administrator',
+        user_name: 'admin',
+        user_type: 'Admin'
+      }
+    });
   }
 
-  return res.status(401).json({ success: false, message: 'Incorrect username or password' });
+  return res.status(401).json({
+    success: false,
+    message: 'Incorrect username or password'
+  });
 });
 
 app.listen(PORT, () => {

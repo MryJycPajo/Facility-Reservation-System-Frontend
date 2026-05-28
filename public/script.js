@@ -23,7 +23,7 @@ function initLoginForm() {
   loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const username = document.getElementById('username').value.trim();
+    const username = document.getElementById('user_name').value.trim();
     const password = passwordInput.value;
 
     if (!username || !password) {
@@ -37,7 +37,7 @@ function initLoginForm() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ user_name: username, password })
       });
 
       const data = await response.json();
