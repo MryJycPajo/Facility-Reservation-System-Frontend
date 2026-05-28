@@ -63,13 +63,9 @@ export async function renderUsersTable() {
     <!-- ACTIONS COLUMN -->
     <td class="px-6 py-4">
       <div class="flex gap-2">
-       <button class="edit-btn" data-id="${user.user_id}">
-  Edit
-</button>
+      <button class="edit-btn rounded-xl bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600 hover:bg-blue-100" data-id="${user.user_id}">Edit</button>
 
-<button class="delete-btn" data-id="${user.user_id}">
-  Delete
-</button>
+<button class="delete-btn rounded-xl bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100" data-id="${user.user_id}">Delete</button>
       </div>
     </td>
   </tr>
@@ -119,37 +115,82 @@ export function initUserModal() {
     const password = document.getElementById('newPassword')?.value.trim();
     const user_type = document.getElementById('newUserType')?.value || 'User';
 
-    if (!full_name || !username || !password) {
-      window.alert('Complete all fields first');
-      return;
-    }
+   // IF ADD MODE
+if (!window.editingUserId) {
+
+  if (!full_name || !username || !password) {
+    window.alert('Complete all fields first');
+    return;
+  }
+
+} else {
+
+  // IF EDIT MODE
+  if (!full_name || !username) {
+    window.alert('Complete all fields first');
+    return;
+  }
+
+}
 
     try {
-      const res = await fetch('http://localhost:3001/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-  user_fullname: full_name,
-  user_name: username,
-  password,
-  user_type
-}),
-      });
 
-      const data = await res.json();
+  let res;
 
-      if (data.success) {
-  window.alert('User saved to database');
-  closeUserModal();
+  // EDIT EXISTING USER
+  if (window.editingUserId) {
 
-  renderUsersTable(); // 👈 ADD THIS
-} else {
-        window.alert(data.message || 'Failed to save user');
-      }
-    } catch (err) {
-      console.error(err);
-      window.alert('Server error');
-    }
+    res = await fetch(`http://localhost:3001/api/users/${window.editingUserId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_fullname: full_name,
+        user_name: username,
+        user_type
+      }),
+    });
+
+    window.editingUserId = null;
+
+  } else {
+
+    // ADD NEW USER
+    res = await fetch('http://localhost:3001/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_fullname: full_name,
+        user_name: username,
+        password,
+        user_type
+      }),
+    });
+
+  }
+
+  const data = await res.json();
+
+  if (data.success) {
+
+    window.alert('User saved successfully');
+
+    closeUserModal();
+
+    renderUsersTable();
+
+  } else {
+
+    window.alert(data.message || 'Failed to save user');
+
+  }
+
+} catch (err) {
+
+  console.error(err);
+
+  window.alert('Server error');
+
+}
   });
 }
 
