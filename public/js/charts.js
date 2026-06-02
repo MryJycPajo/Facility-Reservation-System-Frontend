@@ -1,38 +1,73 @@
-export const mockReservationData = [
-  { month: 'Jan', reservations: 45, revenue: 12500 },
-  { month: 'Feb', reservations: 52, revenue: 14200 },
-  { month: 'Mar', reservations: 61, revenue: 16800 },
-  { month: 'Apr', reservations: 58, revenue: 15900 },
-  { month: 'May', reservations: 73, revenue: 19500 },
-];
+let trendChartInstance = null;
 
-export const mockStatusData = [
-  { name: 'Confirmed', value: 156 },
-  { name: 'Pending', value: 42 },
-  { name: 'Completed', value: 231 },
-  { name: 'Cancelled', value: 18 },
-];
+function getReservationDateKey(reservation) {
+  const rawDate = reservation.reservation_date ?? reservation.date_of_use ?? reservation.date ?? '';
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+  if (!rawDate) return '';
 
-export function renderOverviewCharts() {
+  const stringValue = String(rawDate).trim();
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(stringValue)) {
+    return stringValue;
+  }
+
+  if (stringValue.includes('T')) {
+    return stringValue.slice(0, 10);
+  }
+
+  const parsed = new Date(stringValue);
+  if (!Number.isNaN(parsed.getTime())) {
+    return parsed.toISOString().slice(0, 10);
+  }
+
+  return '';
+}
+
+function buildMonthlyTrendData(reservations) {
+  const today = new Date();
+  const labels = [];
+  const counts = [];
+
+  for (let offset = 5; offset >= 0; offset -= 1) {
+    const monthDate = new Date(today.getFullYear(), today.getMonth() - offset, 1);
+    const monthKey = `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, '0')}`;
+    labels.push(monthDate.toLocaleDateString('en-US', { month: 'short' }));
+
+    const count = reservations.filter((reservation) => {
+      const dateKey = getReservationDateKey(reservation);
+      return dateKey.startsWith(monthKey);
+    }).length;
+
+    counts.push(count);
+  }
+
+  return { labels, counts };
+}
+
+export function renderOverviewCharts(reservations = []) {
   const trendContext = document.getElementById('trendChart');
-  const revenueContext = document.getElementById('revenueChart');
-  const statusContext = document.getElementById('statusChart');
 
-  if (!trendContext || !revenueContext || !statusContext || typeof Chart === 'undefined') {
+  if (!trendContext || typeof Chart === 'undefined') {
     return;
   }
 
-  new Chart(trendContext, {
+  const trendData = Array.isArray(reservations) && reservations.length > 0
+    ? buildMonthlyTrendData(reservations)
+    : buildMonthlyTrendData([]);
+
+  if (trendChartInstance) {
+    trendChartInstance.destroy();
+  }
+
+  trendChartInstance = new Chart(trendContext, {
     type: 'line',
     data: {
-      labels: mockReservationData.map((item) => item.month),
+      labels: trendData.labels,
       datasets: [{
         label: 'Reservations',
-        data: mockReservationData.map((item) => item.reservations),
+        data: trendData.counts,
         borderColor: '#2563eb',
-        backgroundColor: 'rgba(37, 99, 235, 0.10)',
+        backgroundColor: 'rgba(37, 99, 235, 0.12)',
         fill: true,
         tension: 0.35,
         borderWidth: 3,
@@ -66,85 +101,6 @@ export function renderOverviewCharts() {
           beginAtZero: true,
           grid: { color: '#e2e8f0' },
           ticks: { color: '#64748b' },
-        },
-      },
-    },
-  });
-
-  new Chart(revenueContext, {
-    type: 'bar',
-    data: {
-      labels: mockReservationData.map((item) => item.month),
-      datasets: [{
-        label: 'Revenue',
-        data: mockReservationData.map((item) => item.revenue),
-        backgroundColor: '#0ea5e9',
-        borderRadius: 10,
-        borderSkipped: false,
-      }],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: '#0f172a',
-          titleColor: '#ffffff',
-          bodyColor: '#cbd5e1',
-          displayColors: false,
-          padding: 12,
-          cornerRadius: 10,
-          callbacks: {
-            label(context) {
-              return `Revenue: $${context.raw.toLocaleString()}`;
-            },
-          },
-        },
-      },
-      scales: {
-        x: {
-          grid: { display: false },
-          ticks: { color: '#64748b' },
-        },
-        y: {
-          beginAtZero: true,
-          grid: { color: '#e2e8f0' },
-          ticks: {
-            color: '#64748b',
-            callback(value) {
-              return `$${(Number(value) / 1000).toFixed(0)}k`;
-            },
-          },
-        },
-      },
-    },
-  });
-
-  new Chart(statusContext, {
-    type: 'pie',
-    data: {
-      labels: mockStatusData.map((item) => item.name),
-      datasets: [{
-        data: mockStatusData.map((item) => item.value),
-        backgroundColor: COLORS,
-        borderColor: '#ffffff',
-        borderWidth: 3,
-        hoverOffset: 6,
-      }],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: '#0f172a',
-          titleColor: '#ffffff',
-          bodyColor: '#cbd5e1',
-          displayColors: false,
-          padding: 12,
-          cornerRadius: 10,
         },
       },
     },

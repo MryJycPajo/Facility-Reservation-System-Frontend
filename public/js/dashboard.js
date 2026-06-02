@@ -2,6 +2,7 @@ import { renderOverviewCharts } from './charts.js';
 import { initFacilitiesPage } from './facilities.js';
 import { initReservationsPage } from './reservations.js';
 import { initUsersPage } from './users.js';
+import { loadDashboardStats } from './dashboardStats.js';
 import { formatDate } from './utils.js';
 
 export function setCurrentDate() {
@@ -67,7 +68,7 @@ export function initSettingsAction() {
   });
 }
 
-export function initPage() {
+export async function initPage() {
   setCurrentDate();
   setActiveNav();
   initSidebarControls();
@@ -75,7 +76,11 @@ export function initPage() {
   initReservationsPage();
   initFacilitiesPage();
   initUsersPage();
-  renderOverviewCharts();
+
+  if (document.body.dataset.page === 'dashboard') {
+    const overviewData = await loadDashboardStats();
+    renderOverviewCharts(overviewData?.reservations ?? []);
+  }
 
   const pageTitle = document.getElementById('pageTitle');
   if (pageTitle) {
@@ -91,4 +96,6 @@ export function initPage() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', initPage);
+document.addEventListener('DOMContentLoaded', () => {
+  void initPage();
+});

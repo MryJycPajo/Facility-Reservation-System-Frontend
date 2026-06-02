@@ -126,7 +126,7 @@
                   </div>
                 </div>
               </div>
-              <div class="overflow-x-auto">
+              <div class="overflow-x-auto px-6">
                 <table class="min-w-full divide-y divide-slate-200">
                   <thead class="bg-slate-50">
                     <tr>
@@ -143,6 +143,7 @@
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Conflict check</th>
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Control number</th>
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Actions</th>
+                      </div>
                     </tr>
                   </thead>
                   <tbody id="reservationsTableBody" class="divide-y divide-slate-100 bg-white"></tbody>
@@ -162,14 +163,28 @@
     </div>
 
     <div class="space-y-4">
-      <div>
-        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Fullname</label>
-        <input id="newResName" type="text" placeholder="e.g. Juan Dela Cruz" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-      </div>
-      <div>
-        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Contact</label>
-        <input id="newResContact" type="text" placeholder="e.g. 09123456789" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-      </div>
+     <div>
+  <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Fullname</label>
+  <input id="newResName" type="text" placeholder="e.g. Juan Dela Cruz"
+    class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+</div>
+
+<div>
+  <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+    Contact Number
+  </label>
+  <input
+    id="newResContact"
+    type="text"
+    placeholder="09123456789"
+    class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+</div>
+
+<div>
+  <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Purpose</label>
+  <input id="newResPurpose" type="text" placeholder="Enter purpose"
+    class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+</div>
       <div>
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Facility</label>
         <select id="newResFacility" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
@@ -179,10 +194,7 @@
           <option value="Auditorium">Auditorium</option>
         </select>
       </div>
-      <div>
-        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">purpose</label>
-        <input id="newResContact" type="text" placeholder="e.g. 09123456789" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-      </div>
+      
       <div>
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Date of Use</label>
         <input id="newResDate" type="date" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
