@@ -28,27 +28,24 @@ export async function renderReservationsTable() {
     reservations = [];
   }
 
-  const filtered = reservations.filter((reservation) => {
+ const filtered = reservations.filter((reservation) => {
 
-    const matchesSearch = [
-      reservation.res_id,
-      reservation.res_fullname,
-      reservation.res_facility,
-      reservation.date_of_use,
-      reservation.start_time,
-      reservation.end_time,
-      reservation.status
-    ]
-      .join(' ')
-      .toLowerCase()
-      .includes(reservationState.search.toLowerCase());
+  const matchesSearch = [
+    reservation.res_id,
+    reservation.res_fullname,
+    reservation.res_facility,
+    reservation.control_number,
+    reservation.status
+  ]
+    .join(' ')
+    .toLowerCase()
+    .includes(reservationState.search.toLowerCase());
 
-    const matchesStatus =
-      reservationState.status === 'all' ||
-      reservation.status === reservationState.status;
-
-    return matchesSearch && matchesStatus;
-  });
+ const matchesStatus =
+  reservationState.status === 'all' ||
+  reservation.status.toLowerCase().trim() === reservationState.status.toLowerCase().trim();
+  return matchesSearch && matchesStatus;
+});
 
   tbody.innerHTML =
     filtered.map((reservation) => `
@@ -96,22 +93,20 @@ export async function renderReservationsTable() {
           </span>
         </td>
 
-        <td class="px-6 py-4 whitespace-nowrap text-slate-700">
-  ${escapeHtml(reservation.conflict_check)}
-</td>
+    
         <td>${escapeHtml(reservation.control_number)}</td>
 
-<td class="px-4 py-2">
+<td class="px-6 py-4 whitespace-nowrap">
   <div class="flex gap-2">
 
     <button
-      class="edit-btn rounded bg-blue-500 px-3 py-1 text-white"
+      class="edit-btn inline-flex items-center rounded-full bg-blue-100 text-blue-700 px-3 py-1 text-xs font-semibold hover:bg-blue-200 transition"
       data-id="${reservation.res_id}">
       Edit
     </button>
 
     <button
-      class="delete-btn rounded bg-red-500 px-3 py-1 text-white"
+      class="delete-btn inline-flex items-center rounded-full bg-red-100 text-red-700 px-3 py-1 text-xs font-semibold hover:bg-red-200 transition"
       data-id="${reservation.res_id}">
       Delete
     </button>
@@ -271,15 +266,47 @@ async function editReservation(id) {
   window.editingReservationId = id;
 }
 
+async function loadFacilitiesDropdown() {
+  const select = document.getElementById('newResFacility');
+  if (!select) return;
+
+  const res = await fetch('http://localhost:3001/api/facilities');
+  const facilities = await res.json();
+
+  select.innerHTML =
+  '<option value="">Select Facility</option>' +
+  facilities.map(f =>
+    `<option value="${f.fac_name}">${f.fac_name}</option>`
+  ).join('');
+}
+
 export function initReservationsPage() {
 
   renderReservationsTable();
+  loadFacilitiesDropdown();
 
   const saveBtn = document.getElementById('saveReservationBtn');
   const addBtn = document.getElementById('addReservationBtn');
   const modal = document.getElementById('addReservationModal');
   const closeBtn = document.getElementById('closeReservationModalBtn');
   const cancelBtn = document.getElementById('cancelReservationBtn');
+
+  const searchInput = document.getElementById('reservationSearch');
+  const statusFilter = document.getElementById('reservationStatusFilter');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      reservationState.search = e.target.value;
+      renderReservationsTable();
+    });
+  }
+
+  if (statusFilter) {
+    statusFilter.addEventListener('change', (e) => {
+      reservationState.status = e.target.value;
+      renderReservationsTable();
+    });
+  }
 
   if (saveBtn) {
     saveBtn.addEventListener('click', saveReservation);

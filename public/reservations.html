@@ -118,16 +118,15 @@
                     </div>
                     <select id="reservationStatusFilter" class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
                       <option value="all">All Status</option>
-                      <option value="Confirmed">Confirmed</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Completed">Completed</option>
-                      <option value="Cancelled">Cancelled</option>
+                      <option value="pending">Pending</option>
+                      <option value="approved for payment">Approved for Payment</option>
+                      <option value="confirmed">Confirmed</option>
                     </select>
                   </div>
                 </div>
               </div>
               <div class="overflow-x-auto px-6">
-                <table class="min-w-full divide-y divide-slate-200">
+                <table class="min-w-[1800px] divide-y divide-slate-200">
                   <thead class="bg-slate-50">
                     <tr>
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">ID</th>
@@ -140,7 +139,6 @@
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Start Time</th>
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">End Time</th>
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Status</th>
-                      <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Conflict check</th>
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Control number</th>
                       <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Actions</th>
                       </div>
@@ -188,10 +186,7 @@
       <div>
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Facility</label>
         <select id="newResFacility" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-          <option value="Conference Room A">Conference Room A</option>
-          <option value="Sports Hall">Sports Hall</option>
-          <option value="Meeting Room B">Meeting Room B</option>
-          <option value="Auditorium">Auditorium</option>
+              <option value="">Select Facility</option>
         </select>
       </div>
       
@@ -212,10 +207,9 @@
       <div>
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Status</label>
         <select id="newResStatus" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-          <option value="Pending">Pending</option>
-          <option value="Confirmed">Confirmed</option>
-          <option value="Completed">Approved for payment</option>
-          <option value="Cancelled">Rejected</option>
+          <option value="pending">Pending</option>
+          <option value="approved for payment">Approved for Payment</option>
+          <option value="confirmed">Confirmed</option>
         </select>
       </div>
        <div>

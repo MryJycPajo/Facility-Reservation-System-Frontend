@@ -36,15 +36,23 @@ export async function renderFacilitiesTable() {
         <td class="px-6 py-4">${escapeHtml(f.fac_cost)}</td>
         <td class="px-6 py-4">${escapeHtml(f.fac_status || '')}</td>
 
-        <td class="px-6 py-4">
-          <button class="edit-facility text-blue-600" data-id="${f.fac_id}">
-            Edit
-          </button>
+        <td class="px-6 py-4 whitespace-nowrap">
+  <div class="flex gap-2">
 
-          <button class="delete-facility text-red-600" data-id="${f.fac_id}">
-            Delete
-          </button>
-        </td>
+    <button
+      class="edit-facility inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-200 transition"
+      data-id="${f.fac_id}">
+      Edit
+    </button>
+
+    <button
+      class="delete-facility inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-200 transition"
+      data-id="${f.fac_id}">
+      Delete
+    </button>
+
+  </div>
+</td>
       </tr>
     `).join('');
 
@@ -75,6 +83,7 @@ export function initFacilityModal() {
   modal.addEventListener('click', (e) => {
     if (e.target === modal) close();
   });
+
 
   saveBtn?.addEventListener('click', async () => {
     const name = document.getElementById('newFacilityName')?.value.trim();
@@ -161,6 +170,24 @@ export function initFacilitiesPage() {
 
   renderFacilitiesTable();
   initFacilityModal();
+
+  const searchInput = document.getElementById('facilitySearch');
+
+if (searchInput) {
+  searchInput.addEventListener('input', (e) => {
+    facilityState.search = e.target.value;
+    renderFacilitiesTable();
+  });
+}
+
+const statusFilter = document.getElementById('facilityStatusFilter');
+
+if (statusFilter) {
+  statusFilter.addEventListener('change', (e) => {
+    facilityState.status = e.target.value;
+    renderFacilitiesTable();
+  });
+}
 
   document.removeEventListener('click', handleFacilityClicks);
   document.addEventListener('click', handleFacilityClicks);

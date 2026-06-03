@@ -19,14 +19,29 @@ export function escapeHtml(value) {
 export function getStatusClass(status) {
   const key = String(status).toLowerCase();
 
-  if (key === 'confirmed') return 'status-badge status-confirmed';
-  if (key === 'pending') return 'status-badge status-pending';
-  if (key === 'cancelled') return 'status-badge status-cancelled';
-  if (key === 'completed') return 'status-badge status-completed';
-  if (key === 'available') return 'status-badge status-available';
-  if (key === 'maintenance') return 'status-badge status-maintenance';
-  if (key === 'active') return 'status-badge status-active';
-  if (key === 'inactive') return 'status-badge status-inactive';
+  if (key === 'pending')
+    return 'status-badge bg-yellow-100 text-yellow-700';
+
+  if (key === 'approved')
+    return 'status-badge bg-green-100 text-green-700';
+
+  if (key === 'rejected')
+    return 'status-badge bg-red-100 text-red-700';
+
+  if (key === 'cancelled')
+    return 'status-badge bg-gray-100 text-gray-700';
+
+  if (key === 'available')
+    return 'status-badge bg-green-100 text-green-700';
+
+  if (key === 'maintenance')
+    return 'status-badge bg-orange-100 text-orange-700';
+
+  if (key === 'active')
+    return 'status-badge bg-blue-100 text-blue-700';
+
+  if (key === 'inactive')
+    return 'status-badge bg-gray-100 text-gray-700';
 
   return 'status-badge bg-slate-100 text-slate-700';
 }
