@@ -78,3 +78,11 @@ export function generatePassword(length = 12) {
 
   return Array.from(values, (value) => charset[value % charset.length]).join('');
 }
+export function formatDateOnly(dateStr) {
+  if (!dateStr) return '';
+
+  // FORCE SAFE PARSING (NO TIMEZONE SHIFT)
+  const [y, m, d] = dateStr.split('-');
+
+  return `${y}-${m}-${d}`;
+}

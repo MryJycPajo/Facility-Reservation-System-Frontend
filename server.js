@@ -27,7 +27,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Sample data
 const overview = {
   totalReservations: 447,
   activeFacilities: 12,
@@ -43,7 +42,7 @@ const overview = {
 
 const trends = {
   months: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-  reservations: [45, 55, 65, 60, 75]
+  reservations: [45, 55, 65, 60, 75]   
 };
 
 const revenue = {
@@ -70,6 +69,39 @@ app.get('/api/revenue', (req, res) => {
 
 app.get('/api/status', (req, res) => {
   res.json(statusDistribution);
+});
+
+app.get('/api/dashboard/recent-confirmed', (req, res) => {
+  const limit = Number(req.query.limit) || 10;
+  const sql = `SELECT res_id, res_fullname, res_facility, date_of_use, status FROM reservations WHERE LOWER(status) = 'confirmed' ORDER BY date_of_use DESC LIMIT ?`;
+
+  db.query(sql, [limit], (err, results) => {
+    if (err) {
+      console.error('Failed to query recent confirmed reservations:', err);
+      return res.status(500).json({ error: 'Failed to load recent confirmed reservations' });
+    }
+
+    res.json(Array.isArray(results) ? results : []);
+  });
+});
+
+app.get('/api/dashboard/pending-count', (req, res) => {
+  const sql = `
+    SELECT COUNT(*) AS count
+    FROM reservations
+    WHERE LOWER(TRIM(status)) = 'pending'
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error fetching pending count:', err);
+      return res.status(500).json({ count: 0 });
+    }
+
+    res.json({
+      count: results[0].count
+    });
+  });
 });
 
  app.post('/api/login', (req, res) => {

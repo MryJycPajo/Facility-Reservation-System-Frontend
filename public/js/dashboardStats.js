@@ -17,51 +17,37 @@ async function fetchReservations() {
 }
 
 function getReservationDateKey(reservation) {
-  const rawDate = reservation.reservation_date ?? reservation.date_of_use ?? reservation.date ?? '';
+  const rawDate =
+    reservation.reservation_date ??
+    reservation.date_of_use ??
+    reservation.date ??
+    '';
 
   if (!rawDate) return '';
 
-  const stringValue = String(rawDate).trim();
+  const str = String(rawDate).trim();
 
-  if (/^\d{4}-\d{2}-\d{2}$/.test(stringValue)) {
-    return stringValue;
+  // CASE 1: already YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    return str;
   }
 
-  if (stringValue.includes('T')) {
-    return stringValue.slice(0, 10);
+  // CASE 2: MM/DD/YYYY
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(str)) {
+    const [m, d, y] = str.split('/');
+    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
   }
 
-  const parsed = new Date(stringValue);
-  if (!Number.isNaN(parsed.getTime())) {
-    return parsed.toISOString().slice(0, 10);
+  // CASE 3: ISO STRING (FIXED TIMEZONE SAFE)
+  if (str.includes('T')) {
+    const d = new Date(str);
+
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Manila',
+    }).format(d);
   }
 
-  return '';
-}
-
-function getReservationDateTime(reservation, timeValue) {
-  const dateKey = getReservationDateKey(reservation);
-  if (!dateKey || !timeValue) return '';
-
-  const stringTime = String(timeValue).trim();
-  return `${dateKey}T${stringTime.length === 5 ? `${stringTime}:00` : stringTime}`;
-}
-
-function formatTime(value) {
-  if (!value) return '—';
-
-  const stringValue = String(value).trim();
-  const parsed = new Date(stringValue.includes('T') ? stringValue : `1970-01-01T${stringValue}`);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return stringValue;
-  }
-
-  return parsed.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
+  return str.slice(0, 10);
 }
 
 function formatLongDate(value) {
@@ -95,6 +81,19 @@ function getStatusBadgeClass(status) {
 
 function getReservationFacility(reservation) {
   return reservation.res_facility ?? reservation.facility_name ?? reservation.facility ?? 'Unknown Facility';
+}
+
+function formatTime(time) {
+  if (!time) return '';
+
+  const [h, m] = time.split(':');
+  const hour = Number(h);
+  const minute = m || '00';
+
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const formattedHour = hour % 12 || 12;
+
+  return `${formattedHour}:${minute} ${ampm}`;
 }
 
 function createTrendLabel(date) {
@@ -145,8 +144,23 @@ function buildCalendarEvents(reservations) {
 
       const status = normalizeStatus(reservation.status);
       const facility = String(getReservationFacility(reservation)).trim() || 'Unknown Facility';
-      const start = getReservationDateTime(reservation, reservation.start_time) || `${dateKey}T00:00:00`;
-      const end = getReservationDateTime(reservation, reservation.end_time);
+
+      // Build local Date objects for start/end to avoid timezone shifts
+      const [y, m, d] = dateKey.split('-').map((v) => Number(v));
+
+      let start = null;
+      if (reservation.start_time) {
+        const parts = String(reservation.start_time).split(':').map((v) => Number(v));
+        start = new Date(y, m - 1, d, parts[0] || 0, parts[1] || 0, parts[2] || 0);
+      } else {
+        start = new Date(y, m - 1, d, 0, 0, 0);
+      }
+
+      let end = null;
+      if (reservation.end_time) {
+        const parts = String(reservation.end_time).split(':').map((v) => Number(v));
+        end = new Date(y, m - 1, d, parts[0] || 0, parts[1] || 0, parts[2] || 0);
+      }
 
       const event = {
         id: reservation.res_id ?? `${dateKey}-${index}`,
@@ -164,9 +178,7 @@ function buildCalendarEvents(reservations) {
         },
       };
 
-      if (end) {
-        event.end = end;
-      }
+      if (end) event.end = end;
 
       return event;
     })
@@ -180,7 +192,8 @@ function renderReservationList(dateKey, reservations) {
 
   if (!listEl || !countEl || !subtitleEl) return;
 
-  const selectedDate = new Date(`${dateKey}T00:00:00`);
+  const [y, m, d] = dateKey.split('-').map((v) => Number(v));
+  const selectedDate = new Date(y, m - 1, d);
   subtitleEl.textContent = formatLongDate(selectedDate);
   countEl.textContent = `${reservations.length} reservation${reservations.length === 1 ? '' : 's'}`;
 
@@ -358,10 +371,10 @@ function initOverviewCalendar(reservations) {
       info.el.querySelector('.fc-daygrid-day-frame')?.appendChild(indicator);
       info.el.style.cursor = 'pointer';
     },
-    dateClick(info) {
-      const dateKey = info.dateStr;
-      openDateModal(dateKey, reservationsByDate.get(dateKey) ?? []);
-    },
+   dateClick(info) {
+  const dateKey = getLocalDateKey(info.date);
+  openDateModal(dateKey, reservationsByDate.get(dateKey) ?? []);
+}
   });
 
   overviewCalendar.render();
@@ -374,6 +387,8 @@ export async function loadDashboardStats() {
       fetchStats(),
       fetchReservations(),
     ]);
+
+    console.log('RESERVATIONS:', reservations);
 
     populateSummaryCards(reservations, stats);
     initOverviewCalendar(reservations);

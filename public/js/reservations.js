@@ -1,4 +1,4 @@
-import { escapeHtml, getStatusClass } from './utils.js';
+import { escapeHtml, getStatusClass, formatDateOnly } from './utils.js';
 
 async function fetchReservations() {
   const res = await fetch('http://localhost:3001/api/reservations');
@@ -18,6 +18,10 @@ export async function renderReservationsTable() {
 
   try {
     reservations = await fetchReservations();
+
+     reservations.forEach(r => {
+    console.log('DATE FROM API:', r.date_of_use);
+  });
 
     if (!Array.isArray(reservations)) {
       reservations = [];
@@ -48,44 +52,50 @@ export async function renderReservationsTable() {
 });
 
   tbody.innerHTML =
-    filtered.map((reservation) => `
-      <tr>
+  filtered.map((reservation) => {
 
+    console.log('DATE FROM API:', reservation.date_of_use);
+
+    return `
+      <tr>
         <td class="px-6 py-4 font-semibold text-slate-700">
-  ${escapeHtml(reservation.res_id)}
-</td>
-   <td>
-  ${new Date(reservation.timestamp).toLocaleString('en-PH', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  })}
-</td>
+          ${escapeHtml(reservation.res_id)}
+        </td>
+
+        <td>
+          ${new Date(reservation.timestamp).toLocaleString('en-PH', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          })}
+        </td>
+
         <td>${escapeHtml(reservation.res_fullname)}</td>
         <td>${escapeHtml(reservation.contact)}</td>
         <td>${escapeHtml(reservation.res_facility)}</td>
         <td>${escapeHtml(reservation.purpose)}</td>
-        <td>${escapeHtml(new Date(reservation.date_of_use).toLocaleDateString())}</td>
-        <td>
-  ${new Date(`1970-01-01T${reservation.start_time}`)
-      .toLocaleTimeString('en-PH', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      })}
-</td>
+        <td>${escapeHtml(formatDateOnly(reservation.date_of_use))}</td>
 
-<td>
-  ${new Date(`1970-01-01T${reservation.end_time}`)
-      .toLocaleTimeString('en-PH', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      })}
-</td>
+        <td>
+          ${new Date(`1970-01-01T${reservation.start_time}`)
+            .toLocaleTimeString('en-PH', {
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true
+            })}
+        </td>
+
+        <td>
+          ${new Date(`1970-01-01T${reservation.end_time}`)
+            .toLocaleTimeString('en-PH', {
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true
+            })}
+        </td>
 
         <td>
           <span class="${getStatusClass(reservation.status)}">
@@ -93,8 +103,7 @@ export async function renderReservationsTable() {
           </span>
         </td>
 
-    
-        <td>${escapeHtml(reservation.control_number)}</td>
+       <td>${escapeHtml(reservation.control_number)}</td>
 
 <td class="px-6 py-4 whitespace-nowrap">
   <div class="flex gap-2">
@@ -113,15 +122,12 @@ export async function renderReservationsTable() {
 
   </div>
 </td>
-      </tr>
-    `).join('') ||
-    `
-      <tr>
-        <td colspan="13" class="text-center py-10 text-gray-500">
-          No reservations found
-        </td>
-      </tr>
+
+</tr>
     `;
+  }).join('');
+    
+
     // DELETE BUTTON EVENTS
 document.querySelectorAll('.delete-btn').forEach(btn => {
   btn.addEventListener('click', async () => {
@@ -246,7 +252,7 @@ async function editReservation(id) {
     reservation.purpose;
 
   document.getElementById('newResDate').value =
-    reservation.date_of_use.split('T')[0];
+    reservation.date_of_use;
 
   document.getElementById('newResStart').value =
     reservation.start_time;

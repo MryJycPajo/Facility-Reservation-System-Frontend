@@ -127,9 +127,8 @@
             <section class="content-card glass-card soft-shadow rounded-[1.75rem] border border-slate-200 p-5 sm:p-6 xl:p-7">
               <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p class="text-xs font-bold uppercase tracking-[0.28em] text-blue-600">Overview Calendar</p>
                   <h3 class="mt-1 text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">Monthly Reservation Calendar</h3>
-                  <p class="mt-1 text-sm text-slate-500">Read-only view of all reservations. Click any date to inspect the day’s bookings.</p>
+                
                 </div>
                 <div class="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-600">
                   <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-2 text-blue-700"><span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span>Approved</span>
@@ -148,44 +147,52 @@
                     <p class="mt-2 text-sm font-semibold text-slate-500">Reservations happening today</p>
                   </div>
                   <div class="mt-6 rounded-[1.25rem] bg-slate-50 p-4 text-sm text-slate-500">
-                    Compact calendar overview paired with today’s activity for quicker scanning.
                   </div>
                 </article>
               </div>
             </section>
 
             <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              <article class="metric-card glass-card soft-shadow rounded-[1.5rem] border border-slate-200 p-5">
-                <div class="flex items-start justify-between gap-4">
+              <section class="content-card glass-card soft-shadow rounded-[1.75rem] border border-slate-200 p-5 sm:p-6 xl:p-7 xl:col-span-2">
+                <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p class="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Total Reservations</p>
-                    <p id="totalReservations" class="mt-2 text-3xl font-extrabold tracking-tight text-slate-900">0</p>
-                    <p class="mt-2 text-sm font-semibold text-emerald-600">All reservations in the system</p>
+                    <h3 class="text-lg font-extrabold tracking-tight text-slate-900">Recent Confirmed Reservations</h3>
+                    
                   </div>
-                  <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-100">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M3 10h18"></path><path d="M8 2v4"></path><path d="M16 2v4"></path></svg>
+                  <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">Full width</span>
+                </div>
+
+                <div class="overflow-hidden rounded-[1.25rem] border border-slate-200 bg-white p-4">
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                      <thead class="bg-slate-50">
+                        <tr>
+                          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Full Name</th>
+                          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Facility</th>
+                          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Date of Use</th>
+                          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody id="recentConfirmedTableBody" class="bg-white divide-y divide-slate-100">
+                        <tr>
+                          <td colspan="4" class="text-center py-10 text-gray-500">Loading...</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-              </article>
+              </section>
 
               <article class="metric-card glass-card soft-shadow rounded-[1.5rem] border border-slate-200 p-5">
                 <div class="flex items-start justify-between gap-4">
-                  <div class="min-w-0">
-                    <p class="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Top Facilities</p>
-                    <p id="topFacilityCount" class="mt-2 text-3xl font-extrabold tracking-tight text-slate-900">0</p>
-                    <p id="topFacilityName" class="mt-2 truncate text-sm font-semibold text-slate-500">No reservations yet</p>
-                  </div>
-                  <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-600 text-white shadow-lg shadow-violet-100">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><path d="M9 21v-8h6v8"></path></svg>
-                  </div>
-                </div>
-              </article>
-
-              <article class="metric-card glass-card soft-shadow rounded-[1.5rem] border border-slate-200 p-5">
-                <div class="flex items-start justify-between gap-4">
                   <div>
-                    <p class="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Pending Requests</p>
-                    <p id="pendingRequests" class="mt-2 text-3xl font-extrabold tracking-tight text-slate-900">0</p>
+                    <p class="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Pending Reservations</p>
+                    <article id="pendingRequestsCard"
+  class="metric-card glass-card soft-shadow rounded-[1.5rem] border border-slate-200 p-5 cursor-pointer hover:bg-slate-50 transition">
+
+<span id="pendingCount" class="text-2xl font-extrabold text-slate-900">
+  0
+</span>
                     <p class="mt-2 text-sm font-semibold text-amber-600">Waiting for review</p>
                   </div>
                   <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 text-white shadow-lg shadow-amber-100">
@@ -194,19 +201,6 @@
                 </div>
               </article>
             </div>
-
-            <section class="content-card glass-card soft-shadow mt-6 rounded-[1.75rem] border border-slate-200 p-5 sm:p-6 xl:p-7">
-              <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <h3 class="text-lg font-extrabold tracking-tight text-slate-900">Reservation Trend Chart</h3>
-                  <p class="text-sm text-slate-500">Monthly reservation movement for the current dashboard view.</p>
-                </div>
-                <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">Full width</span>
-              </div>
-              <div class="chart-wrap h-[360px]">
-                <canvas id="trendChart"></canvas>
-              </div>
-            </section>
           </main>
         </div>
       </div>

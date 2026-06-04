@@ -3,11 +3,10 @@ import { initFacilitiesPage } from './facilities.js';
 import { initReservationsPage } from './reservations.js';
 import { initUsersPage } from './users.js';
 import { loadDashboardStats } from './dashboardStats.js';
-import { formatDate } from './utils.js';
+import { formatDate, escapeHtml, getStatusClass } from './utils.js';
 
 export function setCurrentDate() {
   const currentDate = document.getElementById('currentDate');
-
   if (currentDate) {
     currentDate.textContent = formatDate(new Date());
   }
@@ -26,25 +25,20 @@ export function initSidebarControls() {
   const sidebarBackdrop = document.getElementById('sidebarBackdrop');
   const sidebarFooter = document.querySelector('#sidebar .border-t.border-slate-200.p-5');
 
-  if (sidebarToggle) {
-    sidebarToggle.addEventListener('click', () => {
-      document.body.classList.add('sidebar-open');
-    });
-  }
+  sidebarToggle?.addEventListener('click', () => {
+    document.body.classList.add('sidebar-open');
+  });
 
-  if (sidebarBackdrop) {
-    sidebarBackdrop.addEventListener('click', () => {
-      document.body.classList.remove('sidebar-open');
-    });
-  }
+  sidebarBackdrop?.addEventListener('click', () => {
+    document.body.classList.remove('sidebar-open');
+  });
 
   if (sidebarFooter && !sidebarFooter.querySelector('[data-logout-link]')) {
     const logoutLink = document.createElement('a');
     logoutLink.href = 'login.html';
-    logoutLink.dataset.logoutLink = 'true';
-    logoutLink.className = 'dashboard-logout mt-4';
-    logoutLink.style.width = '100%';
     logoutLink.textContent = 'Logout';
+    logoutLink.className = 'dashboard-logout mt-4 block';
+    logoutLink.dataset.logoutLink = 'true';
     sidebarFooter.appendChild(logoutLink);
   }
 
@@ -59,13 +53,38 @@ export function initSettingsAction() {
   const saveButton = document.getElementById('saveSettingsButton');
   const settingsStatus = document.getElementById('settingsStatus');
 
-  if (!saveButton || !settingsStatus) return;
+  saveButton?.addEventListener('click', () => {
+    if (!settingsStatus) return;
 
-  saveButton.addEventListener('click', () => {
-    settingsStatus.textContent = 'Settings saved locally. Connect this action to your backend endpoint when ready.';
+    settingsStatus.textContent =
+      'Settings saved locally. Connect backend later.';
     settingsStatus.classList.remove('text-slate-500');
     settingsStatus.classList.add('text-emerald-600');
   });
+}
+
+function initPendingClick() {
+  const card = document.getElementById('pendingRequestsCard');
+
+  if (!card) return;
+
+  card.addEventListener('click', () => {
+    window.location.href = 'reservations.html?status=pending';
+  });
+}
+
+async function loadPendingCount() {
+  try {
+    const res = await fetch('/api/dashboard/pending-count');
+    const data = await res.json();
+
+    const el = document.getElementById('pendingCount');
+    if (el) {
+      el.textContent = data.count ?? 0;
+    }
+  } catch (err) {
+    console.error('Failed to load pending count:', err);
+  }
 }
 
 export async function initPage() {
@@ -73,13 +92,29 @@ export async function initPage() {
   setActiveNav();
   initSidebarControls();
   initSettingsAction();
+
   initReservationsPage();
   initFacilitiesPage();
   initUsersPage();
 
+  // IMPORTANT FEATURES
+  initPendingClick();
+  loadPendingCount();
+
+  await loadPendingCount();
+
   if (document.body.dataset.page === 'dashboard') {
     const overviewData = await loadDashboardStats();
     renderOverviewCharts(overviewData?.reservations ?? []);
+
+    try {
+      const res = await fetch('/api/dashboard/recent-confirmed');
+      const confirmed = await res.json();
+      renderRecentConfirmedTable(Array.isArray(confirmed) ? confirmed : []);
+    } catch (err) {
+      console.error(err);
+      renderRecentConfirmedTable([]);
+    }
   }
 
   const pageTitle = document.getElementById('pageTitle');
@@ -92,10 +127,77 @@ export async function initPage() {
       settings: 'System Settings',
     };
 
-    pageTitle.textContent = titles[document.body.dataset.page] || pageTitle.textContent;
+    pageTitle.textContent =
+      titles[document.body.dataset.page] || pageTitle.textContent;
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   void initPage();
 });
+
+function renderRecentConfirmedTable(items) {
+  const tbody = document.getElementById('recentConfirmedTableBody');
+  if (!tbody) return;
+
+  if (!Array.isArray(items) || items.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" class="text-center py-10 text-gray-500">
+          No confirmed reservations found
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  function parseToLocalDate(dateStr) {
+    if (!dateStr) return null;
+
+    const s = String(dateStr).trim();
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+      const [y, m, d] = s.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) {
+      const [m, d, y] = s.split('/').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    if (s.includes('T')) {
+      const d = new Date(s);
+      return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+
+    const parsed = new Date(s);
+    return Number.isNaN(parsed.getTime())
+      ? null
+      : new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+  }
+
+  tbody.innerHTML = items.map((item) => {
+    const dt = parseToLocalDate(item.date_of_use);
+    const dateText = dt ? dt.toLocaleDateString() : '—';
+
+    return `
+      <tr>
+        <td class="px-6 py-3 font-medium text-slate-700">
+          ${escapeHtml(item.res_fullname || '')}
+        </td>
+        <td class="px-6 py-3 text-slate-600">
+          ${escapeHtml(item.res_facility || '')}
+        </td>
+        <td class="px-6 py-3 text-slate-600">
+          ${escapeHtml(dateText)}
+        </td>
+        <td class="px-6 py-3">
+          <span class="${getStatusClass(item.status || '')}">
+            ${escapeHtml(item.status || '')}
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}

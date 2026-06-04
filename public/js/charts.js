@@ -11,13 +11,22 @@ function getReservationDateKey(reservation) {
     return stringValue;
   }
 
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(stringValue)) {
+    const [m, d, y] = stringValue.split('/');
+    return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  }
+
   if (stringValue.includes('T')) {
-    return stringValue.slice(0, 10);
+    const datePart = stringValue.slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) return datePart;
   }
 
   const parsed = new Date(stringValue);
   if (!Number.isNaN(parsed.getTime())) {
-    return parsed.toISOString().slice(0, 10);
+    const y = parsed.getFullYear();
+    const m = String(parsed.getMonth() + 1).padStart(2, '0');
+    const d = String(parsed.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 
   return '';
