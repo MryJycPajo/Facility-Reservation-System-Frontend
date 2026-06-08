@@ -3,5 +3,25 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "mysql2": "^3.22.3"
-  }
+  },
+  "name": "facility-reservation-system-frontend",
+  "version": "1.0.0",
+  "description": "Simple Bootstrap + Chart.js dashboard with an Express API serving sample data.",
+  "main": "server.js → server_old.js",
+  "devDependencies": {},
+  "scripts": {
+  "start": "node server.js"
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MryJycPajo/Facility-Reservation-System-Frontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MryJycPajo/Facility-Reservation-System-Frontend/issues"
+  },
+  "homepage": "https://github.com/MryJycPajo/Facility-Reservation-System-Frontend#readme"
 }
