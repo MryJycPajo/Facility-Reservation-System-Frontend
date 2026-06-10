@@ -1,39 +1,58 @@
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
+function setMessage(element, text, color) {
+  element.textContent = text;
+  element.style.color = color;
+}
 
-  const user_name = document.getElementById('user_name').value;
-  const password = document.getElementById('password').value;
-  const message = document.getElementById('loginMessage');
+function initLoginForm() {
+  const loginForm = document.getElementById('loginForm');
+  if (!loginForm) {
+    return;
+  }
 
-  try {
-    const res = await fetch('http://localhost:3001/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ user_name, password })
-    });
+  const passwordInput = document.getElementById('password');
+  const togglePassword = document.getElementById('togglePassword');
+  const loginMessage = document.getElementById('loginMessage');
 
-    const data = await res.json();
+  togglePassword.addEventListener('click', () => {
+    const isHidden = passwordInput.type === 'password';
+    passwordInput.type = isHidden ? 'text' : 'password';
+    togglePassword.textContent = isHidden ? 'Hide' : 'Show';
+    togglePassword.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+  });
 
-   if (res.ok) {
-  message.style.color = 'green';
-  message.textContent = 'Login successful';
+  loginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-  localStorage.setItem(
-    'user',
-    JSON.stringify(data.user)
-  );
+    const username = document.getElementById('user_name').value.trim();
+    const password = passwordInput.value;
 
-  window.location.href = 'dashboard.html';
-} else {
-      message.style.color = 'red';
-      message.textContent = data.message || 'Invalid credentials';
+    if (!username || !password) {
+      setMessage(loginMessage, 'Please enter both username and password.', '#fcd34d');
+      return;
     }
 
-  } catch (err) {
-    console.error(err);
-    message.style.color = 'red';
-    message.textContent = 'Server error';
-  }
-});
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user_name: username, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setMessage(loginMessage, data.message || 'Incorrect username or password.', '#fca5a5');
+        return;
+      }
+
+      setMessage(loginMessage, 'Login successful. Redirecting to dashboard...', '#bbf7d0');
+      window.location.href = '/dashboard.html';
+    } catch (error) {
+      setMessage(loginMessage, 'Unable to log in right now. Please try again.', '#fca5a5');
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initLoginForm);

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Facility Management</title>
+    <title>Facility Add-ons Management</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="./css/styles.css">
     <script type="module" defer src="js/dashboard.js"></script>
   </head>
-  <body class="dashboard-body text-slate-900" data-page="facilities">
+  <body class="dashboard-body text-slate-900" data-page="facility-addons">
     <div id="appShell" class="dashboard-shell">
       <div class="flex min-h-screen">
         <div class="sidebar-backdrop fixed inset-0 z-30 bg-slate-950/50 lg:hidden" id="sidebarBackdrop"></div>
@@ -20,16 +20,9 @@
           <div class="flex h-full flex-col">
             <div class="border-b border-slate-200 px-6 py-6">
               <div class="flex items-center gap-3">
-                 <img 
-    src="image/LGU BATUAN LOGO OFFICIAL.png" 
-    alt="LGU Logo"
-    class="h-14 w-14 rounded-full object-cover shadow-lg border border-slate-200"
-  >
-
-  <div>
-    <p class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">
-      Facility Reservation System
-    </p>
+                <img src="image/LGU BATUAN LOGO OFFICIAL.png" alt="LGU Logo" class="h-14 w-14 rounded-full object-cover shadow-lg border border-slate-200">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Facility Reservation System</p>
                   <h1 class="text-xl font-extrabold text-slate-900">Admin Dashboard</h1>
                 </div>
               </div>
@@ -48,12 +41,12 @@
                   <span>Reservations</span>
                 </a>
 
-                <a href="facilities.html" data-nav-link="facilities" class="nav-button is-active flex w-full items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-left text-sm font-semibold text-slate-700 transition hover:border-slate-200 hover:bg-slate-50">
+                <a href="facilities.html" data-nav-link="facilities" class="nav-button flex w-full items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-left text-sm font-semibold text-slate-700 transition hover:border-slate-200 hover:bg-slate-50">
                   <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><path d="M9 21v-8h6v8"></path></svg></span>
                   <span>Facilities</span>
                 </a>
 
-                <a href="facility-addons.html" data-nav-link="facility-addons" class="nav-button flex w-full items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-left text-sm font-semibold text-slate-700 transition hover:border-slate-200 hover:bg-slate-50">
+                <a href="facility-addons.html" data-nav-link="facility-addons" class="nav-button is-active flex w-full items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-left text-sm font-semibold text-slate-700 transition hover:border-slate-200 hover:bg-slate-50">
                   <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path d="M12 2v20"></path><path d="M2 12h20"></path><path d="M5 5l14 14"></path><path d="M19 5 5 19"></path></svg></span>
                   <span>Facility Add-ons</span>
                 </a>
@@ -67,8 +60,6 @@
                   <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path><path d="M7 15h4"></path></svg></span>
                   <span>Payment Collection</span>
                 </a>
-
-               
               </div>
             </nav>
 
@@ -94,9 +85,11 @@
           <header class="sticky top-0 z-20 border-b border-slate-200 bg-white/85 backdrop-blur-xl">
             <div class="flex items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
               <div class="flex items-center gap-3">
-                <button id="sidebarToggle" class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 lg:hidden" aria-label="Open navigation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg></button>
+                <button id="sidebarToggle" class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 lg:hidden" aria-label="Open navigation">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg>
+                </button>
                 <div>
-                  <h2 id="pageTitle" class="text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">Facility Management</h2>
+                  <h2 id="pageTitle" class="text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">Facility Add-ons Management</h2>
                 </div>
               </div>
 
@@ -105,51 +98,47 @@
                   <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">Current date</p>
                   <p id="currentDate" class="text-sm font-semibold text-slate-900">May 25, 2026</p>
                 </div>
-                <div class="">
-                </div>
               </div>
             </div>
           </header>
 
-          <main class="px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
-            <section class="w-full table-card glass-card soft-shadow overflow-hidden rounded-[1.25rem] border border-slate-200">
-              <div class="border-b border-slate-200 px-4 py-4 sm:px-6 sm:py-5">
-                <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <main class="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+            <section class="table-card glass-card soft-shadow overflow-hidden rounded-[1.5rem] border border-slate-200">
+              <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div>
-                    <h3 class="text-lg font-extrabold tracking-tight text-slate-900">Facilities</h3>
-                    <p class="mt-1 text-sm text-slate-500">Manage facility availability, capacity, and utilization.</p>
+                    <h3 class="text-lg font-extrabold tracking-tight text-slate-900">Facility Add-ons</h3>
+                    <p class="mt-1 text-sm text-slate-500">Manage selectable add-ons used in reservation and payment processing.</p>
                   </div>
 
                   <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <div class="relative">
-                      <input id="facilitySearch" type="search" placeholder="Search facilities..." class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 pl-11 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 sm:w-80">
+                      <input id="addonSearch" type="search" placeholder="Search add-ons..." class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 pl-11 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 sm:w-80">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-                      <!-- ADD THIS -->
-<button id="addFacilityBtn" class="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-95">
-  + Add Facility
-</button>
+                      <button id="addAddonBtn" class="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-95">+ Add Add-on</button>
                     </div>
-                    <select id="facilityStatusFilter" class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+                    <select id="addonStatusFilter" class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
                       <option value="all">All Status</option>
-                      <option value="Available">Available</option>
-                      <option value="UnderMaintenance">Under Maintenance</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
                     </select>
                   </div>
                 </div>
               </div>
 
               <div class="overflow-x-auto">
-                <table class="min-w-[980px] w-full divide-y divide-slate-200">
+                <table class="min-w-[1100px] w-full divide-y divide-slate-200">
                   <thead class="bg-slate-50">
                     <tr>
-                      <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500 sm:px-6">ID</th>
-                      <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500 sm:px-6">Facility Name</th>
-                      <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500 sm:px-6">Facility Cost</th>
+                      <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500 sm:px-6">Add-on Name</th>
+                      <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500 sm:px-6">Description</th>
+                      <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500 sm:px-6">Rate</th>
+                      <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500 sm:px-6">Unit Type</th>
                       <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500 sm:px-6">Status</th>
                       <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-500 sm:px-6">Actions</th>
                     </tr>
                   </thead>
-                  <tbody id="facilitiesTableBody" class="divide-y divide-slate-100 bg-white"></tbody>
+                  <tbody id="addonsTableBody" class="divide-y divide-slate-100 bg-white"></tbody>
                 </table>
               </div>
             </section>
@@ -157,42 +146,51 @@
         </div>
       </div>
     </div>
-    <!-- Add Facility Modal -->
-<div id="addFacilityModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/50 backdrop-blur-sm">
-  <div class="w-full max-w-md rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-2xl mx-4">
-    <div class="mb-5 flex items-center justify-between">
-      <h3 class="text-lg font-extrabold text-slate-900">Add New Facility</h3>
-      <button id="closeFacilityModalBtn" class="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50">✕</button>
-    </div>
 
-    <div class="space-y-4">
-      <div>
-        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Facility Name</label>
-        <input id="newFacilityName" type="text" placeholder="e.g. Conference Room" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-      </div>
-      <div>
-        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Capacity</label>
-        <input id="newFacilityCapacity" type="text" placeholder="e.g. 50 people" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-      </div>
-      <div>
-        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Cost</label>
-        <input id="newFacilityCost" type="text" placeholder="e.g. P100" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-      </div>
-      <div>
-        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Status</label>
-        <select id="newFacilityStatus" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-         <option value="">Select Status</option>
-          <option value="Available">Available</option>
-          <option value="UnderMaintenance">Under Maintenance</option>
-        </select>
-      </div>
-    </div>
+    <div id="addAddonModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/50 backdrop-blur-sm">
+      <div class="w-full max-w-md rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-2xl mx-4">
+        <div class="mb-5 flex items-center justify-between">
+          <h3 id="addonModalTitle" class="text-lg font-extrabold text-slate-900">Add New Add-on</h3>
+          <button id="closeAddonModalBtn" class="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50">✕</button>
+        </div>
 
-    <div class="mt-6 flex gap-3">
-      <button id="cancelFacilityBtn" class="flex-1 rounded-2xl border border-slate-200 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</button>
-      <button id="saveFacilityBtn" class="flex-1 rounded-2xl bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-700">Save Facility</button>
+        <div class="space-y-4">
+          <div>
+            <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Add-on Name</label>
+            <input id="newAddonName" type="text" placeholder="e.g. Extra Chairs" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Description</label>
+            <textarea id="newAddonDescription" rows="3" placeholder="Optional description" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"></textarea>
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Rate</label>
+            <input id="newAddonRate" type="number" min="0" step="0.01" placeholder="0.00" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Unit Type</label>
+            <select id="newAddonUnitType" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+              <option value="">Select Unit Type</option>
+              <option value="Piece">Piece</option>
+              <option value="Unit">Unit</option>
+              <option value="Set">Set</option>
+              <option value="Day">Day</option>
+            </select>
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Status</label>
+            <select id="newAddonStatus" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-6 flex gap-3">
+          <button id="cancelAddonBtn" class="flex-1 rounded-2xl border border-slate-200 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</button>
+          <button id="saveAddonBtn" class="flex-1 rounded-2xl bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-700">Save Add-on</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
   </body>
 </html>

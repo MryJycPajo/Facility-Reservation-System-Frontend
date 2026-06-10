@@ -1,5 +1,7 @@
 import { renderOverviewCharts } from './charts.js';
+import { initFacilityAddonsPage } from './facilityAddons.js';
 import { initFacilitiesPage } from './facilities.js';
+import { initPaymentCollectionPage } from './paymentCollection.js';
 import { initReservationsPage } from './reservations.js';
 import { initUsersPage } from './users.js';
 import { loadDashboardStats } from './dashboardStats.js';
@@ -95,6 +97,8 @@ export async function initPage() {
 
   initReservationsPage();
   initFacilitiesPage();
+  initFacilityAddonsPage();
+  initPaymentCollectionPage();
   initUsersPage();
 
   // IMPORTANT FEATURES
@@ -123,6 +127,8 @@ export async function initPage() {
       dashboard: 'Dashboard Overview',
       reservations: 'Reservation Management',
       facilities: 'Facility Management',
+      'facility-addons': 'Facility Add-ons Management',
+      'payment-collection': 'Payment Collection',
       users: 'User Management',
       settings: 'System Settings',
     };

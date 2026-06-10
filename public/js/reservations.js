@@ -1,3 +1,4 @@
+import { buildAddonChecklistHtml, collectSelectedAddonIds, fetchAddonCatalog, getAddonSelectionKey, loadAddonSelection, saveAddonSelection } from './addonUtils.js';
 import { escapeHtml, getStatusClass, formatDateOnly } from './utils.js';
 
 async function fetchReservations() {
@@ -213,6 +214,9 @@ async function saveReservation() {
 
   if (result.success) {
 
+    const addonSelectionKey = getAddonSelectionKey(document.getElementById('newResControlNumber')?.value || window.editingReservationId);
+    saveAddonSelection(addonSelectionKey, collectSelectedAddonIds('reservationAddonsList'));
+
     alert('Reservation saved successfully');
 
     const modal = document.getElementById('addReservationModal');
@@ -263,6 +267,9 @@ async function editReservation(id) {
   document.getElementById('newResStatus').value =
     reservation.status;
 
+  const addonSelectionKey = getAddonSelectionKey(reservation.control_number || reservation.res_id);
+  await loadReservationAddons(loadAddonSelection(addonSelectionKey));
+
   const modal =
     document.getElementById('addReservationModal');
 
@@ -286,10 +293,24 @@ async function loadFacilitiesDropdown() {
   ).join('');
 }
 
+async function loadReservationAddons(selectedIds = []) {
+  const container = document.getElementById('reservationAddonsList');
+  if (!container) return;
+
+  try {
+    const addons = await fetchAddonCatalog({ activeOnly: true });
+    container.innerHTML = buildAddonChecklistHtml(addons, selectedIds);
+  } catch (error) {
+    console.error('Failed to load add-ons:', error);
+    container.innerHTML = '<p class="text-sm text-slate-500">Unable to load add-ons.</p>';
+  }
+}
+
 export function initReservationsPage() {
 
   renderReservationsTable();
   loadFacilitiesDropdown();
+  loadReservationAddons();
 
   const saveBtn = document.getElementById('saveReservationBtn');
   const addBtn = document.getElementById('addReservationBtn');
@@ -323,6 +344,7 @@ export function initReservationsPage() {
     addBtn.addEventListener('click', () => {
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+      void loadReservationAddons();
     });
   }
 
