@@ -50,7 +50,6 @@ async function renderAddonsTable() {
         addon.addon_name,
         addon.description,
        addon.addon_rate,
-        addon.unit_type,
         addon.status,
       ]
         .join(' ')
@@ -76,7 +75,6 @@ async function renderAddonsTable() {
         <td class="px-6 py-4 font-semibold text-slate-700">${escapeHtml(addon.addon_name ?? '')}</td>
         <td class="px-6 py-4 text-slate-600">${escapeHtml(addon.description ?? '')}</td>
         <td class="px-6 py-4 text-slate-700">${escapeHtml(formatMoney(addon.addon_rate))}</td>
-        <td class="px-6 py-4 text-slate-700">${escapeHtml(addon.unit_type ?? '')}</td>
         <td class="px-6 py-4">
           <span class="${getStatusClass(addon.status || '')}">${escapeHtml(addon.status || '')}</span>
         </td>
@@ -133,16 +131,15 @@ async function saveAddon() {
   const unit_type = document.getElementById('newAddonUnitType')?.value;
  const status = (document.getElementById('newAddonStatus')?.value || 'active').toLowerCase();
 
-  if (!addon_name || !rate || !unit_type) {
-    alert('Complete all required fields');
-    return;
-  }
+  if (!addon_name || !rate) {
+  alert('Complete all required fields');
+  return;
+}
 
  const payload = {
   addon_name,
   description,
   addon_rate: Number(rate),   // ✔ FIX HERE
-  unit_type,
   status,
 };
 

@@ -310,7 +310,6 @@ export function initReservationsPage() {
 
   renderReservationsTable();
   loadFacilitiesDropdown();
-  loadReservationAddons();
 
   const saveBtn = document.getElementById('saveReservationBtn');
   const addBtn = document.getElementById('addReservationBtn');
@@ -344,7 +343,6 @@ export function initReservationsPage() {
     addBtn.addEventListener('click', () => {
       modal.classList.remove('hidden');
       modal.classList.add('flex');
-      void loadReservationAddons();
     });
   }
 

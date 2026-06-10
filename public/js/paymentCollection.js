@@ -123,7 +123,7 @@ function getSelectedAddonCatalog(containerId) {
 }
 
 function calculateAddonTotalFromSelection(containerId) {
-  return getSelectedAddonCatalog(containerId).reduce((sum, addon) => sum + (Number(addon.rate) || 0), 0);
+  return getSelectedAddonCatalog(containerId).reduce((sum, addon) => sum + (Number(addon.addon_rate) || 0), 0);
 }
 
 function renderPaymentAddonChecklist(reservation) {
