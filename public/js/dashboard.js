@@ -90,6 +90,18 @@ async function loadPendingCount() {
 }
 
 export async function initPage() {
+
+  const role = localStorage.getItem('role');
+
+  console.log("CURRENT ROLE:", role);
+
+  if (role === 'Admin') {
+
+    document.getElementById('usersMenu')?.remove();
+    document.getElementById('paymentMenu')?.remove();
+    document.getElementById('facilityAddonsMenu')?.remove();
+
+  }
   setCurrentDate();
   setActiveNav();
   initSidebarControls();

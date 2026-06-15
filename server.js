@@ -224,20 +224,6 @@ app.delete('/api/addons/:id', (req, res) => {
  app.post('/api/login', (req, res) => {
   const { user_name, password } = req.body;
 
-  // HARD CODED ADMIN LOGIN
-  if (user_name === 'admin' && password === 'admin123') {
-    return res.json({
-      success: true,
-      message: 'Login successful',
-      user: {
-        id: 1,
-        name: 'Administrator',
-        user_name: 'admin',
-        user_type: 'Admin'
-      }
-    });
-  }
-
   return res.status(401).json({
     success: false,
     message: 'Incorrect username or password'

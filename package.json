@@ -7,7 +7,7 @@
   "name": "facility-reservation-system-frontend",
   "version": "1.0.0",
   "description": "Simple Bootstrap + Chart.js dashboard with an Express API serving sample data.",
-  "main": "server.js → server_old.js",
+  "main": "server.js → server.js",
   "devDependencies": {},
   "scripts": {
   "start": "node server.js"

@@ -5,20 +5,19 @@ function setMessage(element, text, color) {
 
 function initLoginForm() {
   const loginForm = document.getElementById('loginForm');
-  if (!loginForm) {
-    return;
-  }
+  if (!loginForm) return;
 
   const passwordInput = document.getElementById('password');
   const togglePassword = document.getElementById('togglePassword');
   const loginMessage = document.getElementById('loginMessage');
 
+ if (togglePassword && passwordInput) {
   togglePassword.addEventListener('click', () => {
     const isHidden = passwordInput.type === 'password';
     passwordInput.type = isHidden ? 'text' : 'password';
     togglePassword.textContent = isHidden ? 'Hide' : 'Show';
-    togglePassword.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
   });
+}
 
   loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -34,23 +33,42 @@ function initLoginForm() {
     try {
       const response = await fetch('/api/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_name: username, password })
       });
 
-      const data = await response.json();
+     const data = await response.json();
+
+console.log("FULL RESPONSE:", data);
 
       if (!response.ok || !data.success) {
         setMessage(loginMessage, data.message || 'Incorrect username or password.', '#fca5a5');
         return;
       }
 
-      setMessage(loginMessage, 'Login successful. Redirecting to dashboard...', '#bbf7d0');
-      window.location.href = '/dashboard.html';
+      setMessage(loginMessage, 'Login successful. Redirecting...', '#bbf7d0');
+
+      localStorage.setItem('role', data.user.user_type);
+      localStorage.setItem('name', data.user.name);
+
+      // ✅ ROLE REDIRECT
+const role = data.user.user_type;
+
+if (role === 'Super Admin') {
+  window.location.href = '/dashboard.html';
+}
+else if (role === 'Admin') {
+  window.location.href = '/dashboard.html';
+}
+else if (role === 'Collecting Officer') {
+  window.location.href = '/payment-collection.html';
+}
+else {
+  setMessage(loginMessage, 'Unknown user role: ' + role, '#fca5a5');
+}
+
     } catch (error) {
-      setMessage(loginMessage, 'Unable to log in right now. Please try again.', '#fca5a5');
+      setMessage(loginMessage, 'Unable to login. Try again later.', '#fca5a5');
     }
   });
 }
