@@ -31,7 +31,7 @@ function initLoginForm() {
     }
 
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch('http://localhost:3001/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_name: username, password })
@@ -48,19 +48,24 @@ console.log("FULL RESPONSE:", data);
 
       setMessage(loginMessage, 'Login successful. Redirecting...', '#bbf7d0');
 
-      localStorage.setItem('role', data.user.user_type);
+     localStorage.setItem('role', data.user.role);
       localStorage.setItem('name', data.user.name);
 
       // ✅ ROLE REDIRECT
-const role = data.user.user_type;
+const role = data.user.role.toLowerCase();
 
-if (role === 'Super Admin') {
+console.log("ROLE:", role);
+
+localStorage.setItem('role', role);
+localStorage.setItem('name', data.user.name);
+
+if (role === 'super admin') {
   window.location.href = '/dashboard.html';
 }
-else if (role === 'Admin') {
+else if (role === 'admin') {
   window.location.href = '/dashboard.html';
 }
-else if (role === 'Collecting Officer') {
+else if (role === 'collecting officer') {
   window.location.href = '/payment-collection.html';
 }
 else {

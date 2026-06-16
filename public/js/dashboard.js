@@ -7,6 +7,12 @@ import { initUsersPage } from './users.js';
 import { loadDashboardStats } from './dashboardStats.js';
 import { formatDate, escapeHtml, getStatusClass } from './utils.js';
 
+const roleMap = {
+  'super admin': 'Super Admin',
+  'admin': 'Admin',
+  'collecting officer': 'Collecting Officer'
+};
+
 export function setCurrentDate() {
   const currentDate = document.getElementById('currentDate');
   if (currentDate) {
@@ -71,6 +77,13 @@ function initPendingClick() {
   if (!card) return;
 
   card.addEventListener('click', () => {
+    const role = localStorage.getItem('role');
+
+    if (role === 'collecting officer') {
+      alert('Access denied');
+      return;
+    }
+
     window.location.href = 'reservations.html?status=pending';
   });
 }
@@ -92,16 +105,47 @@ async function loadPendingCount() {
 export async function initPage() {
 
   const role = localStorage.getItem('role');
+  const name = localStorage.getItem('name'); // ✔ ONLY ONCE
 
   console.log("CURRENT ROLE:", role);
 
-  if (role === 'Admin') {
+  // SUPER ADMIN
+  if (role === 'super admin') {}
 
+  // ADMIN
+  if (role === 'admin') {
     document.getElementById('usersMenu')?.remove();
-    document.getElementById('paymentMenu')?.remove();
     document.getElementById('facilityAddonsMenu')?.remove();
-
+    document.getElementById('paymentMenu')?.remove();
   }
+
+  // COLLECTING OFFICER
+  if (role === 'collecting officer') {
+    document.getElementById('usersMenu')?.remove();
+    document.getElementById('facilityAddonsMenu')?.remove();
+    document.getElementById('reservationsMenu')?.remove();
+    document.getElementById('facilitiesMenu')?.remove();
+  }
+
+  // UI DISPLAY
+  const roleLabel = document.getElementById('userRoleLabel');
+  const nameLabel = document.getElementById('userNameLabel');
+  const initialsEl = document.getElementById('userInitials');
+
+  if (roleLabel) roleLabel.textContent = role || 'Unknown Role';
+  if (nameLabel) nameLabel.textContent = name || 'Guest User';
+
+  if (initialsEl && name) {
+    const initials = name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+
+    initialsEl.textContent = initials;
+  }
+
   setCurrentDate();
   setActiveNav();
   initSidebarControls();
@@ -145,10 +189,11 @@ export async function initPage() {
       settings: 'System Settings',
     };
 
-    pageTitle.textContent =
-      titles[document.body.dataset.page] || pageTitle.textContent;
-  }
+   pageTitle.textContent =
+  titles[document.body.dataset.page] || pageTitle.textContent;
 }
+
+} 
 
 document.addEventListener('DOMContentLoaded', () => {
   void initPage();
