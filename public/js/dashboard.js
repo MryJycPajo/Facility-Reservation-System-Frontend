@@ -7,6 +7,32 @@ import { initUsersPage } from './users.js';
 import { loadDashboardStats } from './dashboardStats.js';
 import { formatDate, escapeHtml, getStatusClass } from './utils.js';
 
+function getGreeting(name, role) {
+  const hour = new Date().getHours();
+
+  let timeGreeting = '';
+
+  if (hour < 12) {
+    timeGreeting = 'Good morning';
+  } else if (hour < 18) {
+    timeGreeting = 'Good afternoon';
+  } else {
+    timeGreeting = 'Good evening';
+  }
+
+  let message = `${timeGreeting}, ${name}`;
+
+  if (role === 'admin') {
+    message += ' 👨‍💼';
+  } else if (role === 'collecting officer') {
+    message += ' 🧾';
+  } else {
+    message += ' 👋';
+  }
+
+  return message;
+}
+
 const roleMap = {
   'super admin': 'Super Admin',
   'admin': 'Admin',
@@ -90,7 +116,7 @@ function initPendingClick() {
 
 async function loadPendingCount() {
   try {
-    const res = await fetch('/api/dashboard/pending-count');
+    const res = await fetch('http://localhost:3001/api/dashboard/pending-count');
     const data = await res.json();
 
     const el = document.getElementById('pendingCount');
@@ -105,9 +131,12 @@ async function loadPendingCount() {
 export async function initPage() {
 
   const role = localStorage.getItem('role');
-  const name = localStorage.getItem('name'); // ✔ ONLY ONCE
+  const name = localStorage.getItem('name');
 
-  console.log("CURRENT ROLE:", role);
+  const welcomeEl = document.getElementById('welcomeText');
+  if (welcomeEl && name && role) {
+    welcomeEl.textContent = getGreeting(name, role);
+  }
 
   // SUPER ADMIN
   if (role === 'super admin') {}
@@ -132,20 +161,24 @@ export async function initPage() {
   const nameLabel = document.getElementById('userNameLabel');
   const initialsEl = document.getElementById('userInitials');
 
-  if (roleLabel) roleLabel.textContent = role || 'Unknown Role';
-  if (nameLabel) nameLabel.textContent = name || 'Guest User';
-
-  if (initialsEl && name) {
-    const initials = name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-
-    initialsEl.textContent = initials;
+  if (roleLabel) {
+    roleLabel.textContent = roleMap[role] || 'Unknown Role';
   }
 
+  if (nameLabel) {
+    nameLabel.textContent = name || 'Guest User';
+  }
+
+  if (initialsEl && name) {
+  const initials = name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
+  initialsEl.textContent = initials;
+}
   setCurrentDate();
   setActiveNav();
   initSidebarControls();
@@ -157,43 +190,41 @@ export async function initPage() {
   initPaymentCollectionPage();
   initUsersPage();
 
-  // IMPORTANT FEATURES
   initPendingClick();
-  loadPendingCount();
 
-  await loadPendingCount();
+await loadPendingCount();
 
-  if (document.body.dataset.page === 'dashboard') {
-    const overviewData = await loadDashboardStats();
-    renderOverviewCharts(overviewData?.reservations ?? []);
+if (document.body.dataset.page === 'dashboard') {
+  const overviewData = await loadDashboardStats();
+  renderOverviewCharts(overviewData?.reservations ?? []);
 
-    try {
-      const res = await fetch('/api/dashboard/recent-confirmed');
-      const confirmed = await res.json();
-      renderRecentConfirmedTable(Array.isArray(confirmed) ? confirmed : []);
-    } catch (err) {
-      console.error(err);
-      renderRecentConfirmedTable([]);
-    }
+  try {
+    const res = await fetch('http://localhost:3001/api/dashboard/recent-confirmed');
+    const confirmed = await res.json();
+    renderRecentConfirmedTable(Array.isArray(confirmed) ? confirmed : []);
+  } catch (err) {
+    console.error(err);
+    renderRecentConfirmedTable([]);
   }
-
-  const pageTitle = document.getElementById('pageTitle');
-  if (pageTitle) {
-    const titles = {
-      dashboard: 'Dashboard Overview',
-      reservations: 'Reservation Management',
-      facilities: 'Facility Management',
-      'facility-addons': 'Facility Add-ons Management',
-      'payment-collection': 'Payment Collection',
-      users: 'User Management',
-      settings: 'System Settings',
-    };
-
-   pageTitle.textContent =
-  titles[document.body.dataset.page] || pageTitle.textContent;
 }
 
-} 
+const pageTitle = document.getElementById('pageTitle');
+if (pageTitle) {
+  const titles = {
+    dashboard: 'Dashboard Overview',
+    reservations: 'Reservation Management',
+    facilities: 'Facility Management',
+    'facility-addons': 'Facility Add-ons Management',
+    'payment-collection': 'Payment Collection',
+    users: 'User Management',
+    settings: 'System Settings',
+  };
+
+  pageTitle.textContent =
+    titles[document.body.dataset.page] || pageTitle.textContent;
+}
+
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   void initPage();

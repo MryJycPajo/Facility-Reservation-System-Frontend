@@ -289,7 +289,10 @@ function populatePaymentModal(reservation) {
 
   const today = new Date().toISOString().slice(0, 10);
   setInputValue('paymentDate', today);
-  setInputValue('paymentCollectorName', 'Super Admin');
+
+  const collectorName = localStorage.getItem('name') || '';
+  setInputValue('paymentCollectorName', collectorName);
+
   setInputValue('paymentReceiptNumber', '');
 }
 
@@ -519,4 +522,12 @@ export function initPaymentCollectionPage() {
   if (paymentDate && !paymentDate.value) {
     paymentDate.value = new Date().toISOString().slice(0, 10);
   }
+
+  // AUTO FILL COLLECTOR NAME
+ const collectorInput = document.getElementById('paymentCollectorName');
+
+if (collectorInput) {
+  collectorInput.value = localStorage.getItem('name') || '';
+  collectorInput.readOnly = true;
+}
 }

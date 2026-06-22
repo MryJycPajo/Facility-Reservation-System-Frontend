@@ -92,9 +92,33 @@ export function initUserModal() {
 
   if (!addButton || !modal) return;
 
-  const closeUserModal = () => closeModal(modal);
+  const closeUserModal = () => {
 
-  addButton.addEventListener('click', () => openModal(modal));
+  // reset edit mode
+  window.editingUserId = null;
+
+  // clear fields
+  document.getElementById('newFullname').value = '';
+  document.getElementById('newUsername').value = '';
+  document.getElementById('newPassword').value = '';
+  document.getElementById('newUserType').value = 'User';
+
+  closeModal(modal);
+};
+
+  addButton.addEventListener('click', () => {
+
+  // sigurado nga Add mode
+  window.editingUserId = null;
+
+  document.getElementById('newFullname').value = '';
+  document.getElementById('newUsername').value = '';
+  document.getElementById('newPassword').value = '';
+  document.getElementById('newUserType').value = 'User';
+
+  openModal(modal);
+
+});
   closeButton?.addEventListener('click', closeUserModal);
   cancelButton?.addEventListener('click', closeUserModal);
   generatePasswordButton?.addEventListener('click', () => {
@@ -200,6 +224,15 @@ export function initUsersPage() {
   }
 
   initUserFilters();
+
+  // Clear search field
+  const userSearch = document.getElementById('userSearch');
+
+  if (userSearch) {
+    userSearch.value = '';
+    userState.search = '';
+  }
+
   initUserModal();
   renderUsersTable();
 }
@@ -232,8 +265,11 @@ async function deleteUser(id) {
 }
 
 async function editUser(id) {
+
   const res = await fetch(`http://localhost:3001/api/users/${id}`);
   const user = await res.json();
+
+  window.editingUserId = id;
 
   document.getElementById('newFullname').value = user.user_fullname;
   document.getElementById('newUsername').value = user.user_name;
@@ -241,7 +277,6 @@ async function editUser(id) {
 
   openModal(document.getElementById('addUserModal'));
 
-  window.editingUserId = id;
 }
 document.addEventListener('click', (e) => {
 

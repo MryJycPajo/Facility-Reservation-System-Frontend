@@ -40,6 +40,7 @@ function initLoginForm() {
      const data = await response.json();
 
 console.log("FULL RESPONSE:", data);
+console.log("USER OBJECT:", data.user);
 
       if (!response.ok || !data.success) {
         setMessage(loginMessage, data.message || 'Incorrect username or password.', '#fca5a5');
@@ -48,16 +49,19 @@ console.log("FULL RESPONSE:", data);
 
       setMessage(loginMessage, 'Login successful. Redirecting...', '#bbf7d0');
 
-     localStorage.setItem('role', data.user.role);
-      localStorage.setItem('name', data.user.name);
+ const role = data.user.role.toLowerCase();
 
-      // ✅ ROLE REDIRECT
-const role = data.user.role.toLowerCase();
-
-console.log("ROLE:", role);
+const fullName =
+  data.user.user_fullname ||
+  data.user.fullname ||
+  data.user.name ||
+  data.user.user_name;
 
 localStorage.setItem('role', role);
-localStorage.setItem('name', data.user.name);
+localStorage.setItem('name', fullName);
+
+console.log("ROLE:", role);
+console.log("NAME:", fullName);
 
 if (role === 'super admin') {
   window.location.href = '/dashboard.html';
