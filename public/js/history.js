@@ -1,4 +1,5 @@
 import { escapeHtml } from './utils.js';
+import { printReceipt } from './paymentCollection.js';
 
 const API_BASE = 'http://localhost:3001';
 
@@ -67,6 +68,7 @@ async function loadHistory() {
 
   try {
     const records = await fetchHistory();
+   console.log(records[0]);
 
     if (!Array.isArray(records) || records.length === 0) {
       tbody.innerHTML = `
@@ -105,9 +107,17 @@ async function loadHistory() {
           ${escapeHtml(record.collector_name || '—')}
         </td>
 
-        <td class="px-6 py-4">
-          ${getStatusBadge(record.display_status)}
-        </td>
+<td class="px-6 py-4">
+  ${getStatusBadge(record.display_status)}
+</td>
+
+<td class="px-6 py-4">
+  <button
+    class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+    onclick="reprintReceipt(${record.payment_id})">
+    Reprint
+  </button>
+</td>
       </tr>
     `).join('');
 
@@ -150,5 +160,25 @@ export function initHistoryPage() {
     });
   }
 }
+
+window.reprintReceipt = async function(paymentId) {
+
+  console.log("CLICKED ID:", paymentId);
+
+  if (!paymentId) {
+    alert("Walay payment ID!");
+    return;
+  }
+
+  const res = await fetch(`http://localhost:3001/api/payments/${paymentId}`);
+
+  console.log("STATUS:", res.status);
+
+  const data = await res.json();
+
+  console.log("DATA:", data);
+
+  printReceipt(data);
+};
 
 document.addEventListener('DOMContentLoaded', initHistoryPage);

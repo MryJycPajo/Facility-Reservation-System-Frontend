@@ -406,11 +406,20 @@ async function confirmPayment() {
   const paymentDate = document.getElementById('paymentDate')?.value;
   const collectorName = document.getElementById('paymentCollectorName')?.value.trim();
 
-  const addonIds = collectSelectedAddonIds('paymentAddonsList');
-  const selectedAddons = paymentState.addons.filter((addon) => addonIds.includes(String(addon.addon_id)));
-  const facilityFee = getFacilityFee(paymentState.selectedReservation);
-  const addonTotal = selectedAddons.reduce((sum, addon) => sum + (Number(addon.addon_rate) || 0), 0);
-  const totalDue = facilityFee + addonTotal;
+const addonIds = collectSelectedAddonIds('paymentAddonsList');
+
+const selectedAddons = paymentState.addons.filter((addon) =>
+  addonIds.includes(String(addon.addon_id))
+);
+
+const addonDetails = selectedAddons.map(addon => ({
+  name: addon.addon_name || addon.name,
+  price: Number(addon.addon_rate || 0)
+}));
+
+const facilityFee = getFacilityFee(paymentState.selectedReservation);
+const addonTotal = selectedAddons.reduce((sum, addon) => sum + (Number(addon.addon_rate) || 0), 0);
+const totalDue = facilityFee + addonTotal;
 
   if (!receiptNumber || !paymentDate || !collectorName) {
     alert('Please complete the payment information fields.');
@@ -423,33 +432,306 @@ async function confirmPayment() {
   }
 
   const paymentRecord = {
-    reservation_id: paymentState.selectedReservation.res_id,
-    control_number: getReservationControlNumber(paymentState.selectedReservation),
-    full_name: paymentState.selectedReservation.res_fullname ?? '',
-    contact_number: getReservationContact(paymentState.selectedReservation),
-    facility: getReservationFacilityName(paymentState.selectedReservation),
-    purpose: paymentState.selectedReservation.purpose ?? '',
-    date_of_use: paymentState.selectedReservation.date_of_use ?? paymentState.selectedReservation.reservation_date ?? '',
-    start_time: paymentState.selectedReservation.start_time ?? '',
-    end_time: paymentState.selectedReservation.end_time ?? '',
-    facility_fee: facilityFee,
-    addon_fee_total: addonTotal,
-    total_amount_due: totalDue,
-    selected_addons: selectedAddons,
-    official_receipt_number: receiptNumber,
-    amount_paid: amountPaid,
-    payment_date: paymentDate,
-    collector_name: collectorName,
-    created_at: new Date().toISOString(),
-  };
+  reservation_id: paymentState.selectedReservation.res_id,
+  control_number: getReservationControlNumber(paymentState.selectedReservation),
+  full_name: paymentState.selectedReservation.res_fullname ?? '',
+  contact_number: getReservationContact(paymentState.selectedReservation),
+  facility: getReservationFacilityName(paymentState.selectedReservation),
+  purpose: paymentState.selectedReservation.purpose ?? '',
+  date_of_use: paymentState.selectedReservation.date_of_use ?? paymentState.selectedReservation.reservation_date ?? '',
+  start_time: paymentState.selectedReservation.start_time ?? '',
+  end_time: paymentState.selectedReservation.end_time ?? '',
 
-  await savePaymentRecord(paymentRecord);
-  saveAddonSelection(paymentState.selectedReservation, addonIds);
-  await updateReservationStatus(paymentState.selectedReservation);
+  facility_fee: facilityFee,
+  addon_fee_total: addonTotal,
+  total_amount_due: totalDue,
 
-  alert('Payment confirmed successfully.');
-  closePaymentModal();
-  await loadPaymentCollectionData();
+  // 🔥 FIX HERE
+ selected_addons: addonDetails,
+
+  official_receipt_number: receiptNumber,
+  amount_paid: amountPaid,
+  payment_date: paymentDate,
+  collector_name: collectorName,
+  created_at: new Date().toISOString(),
+};
+
+await savePaymentRecord(paymentRecord);
+saveAddonSelection(paymentState.selectedReservation, addonIds);
+await updateReservationStatus(paymentState.selectedReservation);
+
+alert('Payment confirmed successfully.');
+
+printReceipt(paymentRecord);
+
+closePaymentModal();
+await loadPaymentCollectionData();
+}
+function numberToWords(num) {
+
+    const ones = [
+        '', 'ONE', 'TWO', 'THREE', 'FOUR',
+        'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE',
+        'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN',
+        'FOURTEEN', 'FIFTEEN', 'SIXTEEN',
+        'SEVENTEEN', 'EIGHTEEN', 'NINETEEN'
+    ];
+
+    const tens = [
+        '', '', 'TWENTY', 'THIRTY', 'FORTY',
+        'FIFTY', 'SIXTY', 'SEVENTY', 'EIGHTY', 'NINETY'
+    ];
+
+    if (num === 0) return 'ZERO';
+
+    if (num < 20) return ones[num];
+
+    if (num < 100) {
+        return tens[Math.floor(num / 10)] +
+            (num % 10 ? ' ' + ones[num % 10] : '');
+    }
+
+    if (num < 1000) {
+        return ones[Math.floor(num / 100)] +
+            ' HUNDRED' +
+            (num % 100 ? ' ' + numberToWords(num % 100) : '');
+    }
+
+    if (num < 1000000) {
+        return numberToWords(Math.floor(num / 1000)) +
+            ' THOUSAND' +
+            (num % 1000 ? ' ' + numberToWords(num % 1000) : '');
+    }
+
+    if (num < 1000000000) {
+        return numberToWords(Math.floor(num / 1000000)) +
+            ' MILLION' +
+            (num % 1000000 ? ' ' + numberToWords(num % 1000000) : '');
+    }
+
+    return '';
+}
+
+export function printReceipt(payment) {
+
+  console.log("PRINT RECEIPT:", payment);
+  console.log("SELECTED ADDONS:", payment.selected_addons);
+
+let addonList = [];
+
+if (Array.isArray(payment.selected_addons)) {
+  // Bag-ong payment (array)
+  addonList = payment.selected_addons;
+} else if (typeof payment.selected_addons === 'string') {
+  // Daang payment gikan sa database (string)
+  addonList = payment.selected_addons
+    .split('<br>')
+    .map(item => {
+      const parts = item.split(' - ₱');
+
+      return {
+        name: parts[0],
+        price: Number(parts[1] || 0)
+      };
+    });
+}
+
+const addonText = addonList
+  .map(a => a.name)
+  .join('<br>');
+
+const addonAmounts = addonList
+  .map(a => Number(a.price).toFixed(2))
+  .join('<br>');
+
+const formattedDate = new Date(payment.payment_date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+
+  console.log("Original payment_date:", payment.payment_date);
+  console.log("Formatted date:", formattedDate);
+
+  const printWindow = window.open('', '_blank');
+
+  console.log("printWindow =", printWindow);
+
+  if (!printWindow) {
+    alert("Popup blocked! Please allow popups.");
+    return;
+  }
+
+  printWindow.document.write(`
+
+  <html>
+  <head>
+    <title>Official Receipt</title>
+
+    <style>
+
+      body{
+        margin:0;
+        font-family: Arial, sans-serif;
+      }
+
+.receipt{
+    position:relative;
+    width:800px;
+    height:1100px;
+    margin:auto;
+}
+
+      .field{
+        position:absolute;
+        font-size:14px;
+      }
+
+      /* DATE */
+      .date{
+        top:145px;
+        left:150px;
+      }
+
+      /* OR NUMBER */
+      .orno{
+        top:145px;
+        left:470px;
+        font-weight:bold;
+      }
+
+      /* PAYOR */
+      .payor{
+        top:205px;
+        left:120px;
+        width:420px;
+      }
+
+      /* NATURE OF COLLECTION */
+      .nature{
+        top:285px;
+        left:120px;
+        width:250px;
+      }
+
+      /* ACCOUNT CODE */
+      .account{
+        top:285px;
+        left:390px;
+      }
+
+      /* AMOUNT */
+      .amount{
+        top:285px;
+        left:560px;
+      }
+
+      /* TOTAL */
+      .total{
+        top:610px;
+        left:560px;
+        font-weight:bold;
+      }
+
+      /* AMOUNT IN WORDS */
+      .words{
+        top:650px;
+        left:220px;
+        width:400px;
+      }
+
+      /* COLLECTING OFFICER */
+      .collector{
+        top:910px;
+        left:500px;
+        text-align:center;
+      }
+
+@media print{
+
+    @page{
+        size:108mm 203mm;
+        margin:0;
+    }
+
+    html,
+    body{
+        margin:0;
+        padding:0;
+        width:108mm;
+        height:203mm;
+        overflow:hidden;
+    }
+
+    .receipt{
+        position:relative;
+        width:800px;
+        height:1100px;
+
+        transform:scale(0.60);
+        transform-origin:top left;
+    }
+
+}
+
+    </style>
+  </head>
+
+  <body>
+
+    <div class="receipt">
+
+      <div class="field date">
+        ${formattedDate}
+      </div>
+
+      <div class="field orno">
+        ${payment.or_number || payment.official_receipt_number}
+      </div>
+
+<div class="field payor">
+  ${payment.res_fullname || payment.full_name}
+</div>
+
+<div class="field nature">
+  ${payment.res_facility || payment.facility}<br>
+  ${addonText}
+</div>
+
+<div class="field account">
+  -
+</div>
+
+<div class="field amount">
+  ${Number(payment.facility_fee).toFixed(2)}<br>
+  ${addonAmounts}
+</div>
+
+      <div class="field total">
+        ${Number(payment.amount_paid).toFixed(2)}
+      </div>
+
+<div class="field words">
+  ${numberToWords(parseInt(payment.amount_paid))} PESOS ONLY
+</div>
+
+      <div class="field collector">
+        ${payment.collector_name}
+      </div>
+
+    </div>
+
+    <script>
+      window.onload = function(){
+        window.print();
+      }
+    </script>
+
+  </body>
+  </html>
+  `);
+
+  printWindow.document.close();
 }
 
 function bindPaymentModalControls() {
