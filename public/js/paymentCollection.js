@@ -446,7 +446,6 @@ const totalDue = facilityFee + addonTotal;
   addon_fee_total: addonTotal,
   total_amount_due: totalDue,
 
-  // 🔥 FIX HERE
  selected_addons: addonDetails,
 
   official_receipt_number: receiptNumber,
@@ -520,20 +519,32 @@ export function printReceipt(payment) {
 let addonList = [];
 
 if (Array.isArray(payment.selected_addons)) {
-  // Bag-ong payment (array)
-  addonList = payment.selected_addons;
-} else if (typeof payment.selected_addons === 'string') {
-  // Daang payment gikan sa database (string)
-  addonList = payment.selected_addons
-    .split('<br>')
-    .map(item => {
-      const parts = item.split(' - ₱');
 
-      return {
-        name: parts[0],
-        price: Number(parts[1] || 0)
-      };
-    });
+    addonList = payment.selected_addons;
+
+} else if (typeof payment.selected_addons === 'string') {
+
+    try {
+
+        addonList = JSON.parse(payment.selected_addons);
+
+    } catch {
+
+        addonList = payment.selected_addons
+            .split('<br>')
+            .map(item => {
+
+                const parts = item.split(' - ₱');
+
+                return {
+                    name: parts[0],
+                    price: Number(parts[1] || 0)
+                };
+
+            });
+
+    }
+
 }
 
 const addonText = addonList
@@ -552,6 +563,9 @@ const formattedDate = new Date(payment.payment_date).toLocaleDateString('en-US',
 
   console.log("Original payment_date:", payment.payment_date);
   console.log("Formatted date:", formattedDate);
+
+  console.log("FACILITY FEE:", payment.facility_fee);
+  console.log("PAYMENT:", payment);
 
   const printWindow = window.open('', '_blank');
 
@@ -805,7 +819,6 @@ export function initPaymentCollectionPage() {
     paymentDate.value = new Date().toISOString().slice(0, 10);
   }
 
-  // AUTO FILL COLLECTOR NAME
  const collectorInput = document.getElementById('paymentCollectorName');
 
 if (collectorInput) {
