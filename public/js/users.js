@@ -29,7 +29,7 @@ export async function renderUsersTable() {
   if (!tbody) return;
 
   try {
-    const res = await fetch('http://localhost:3001/api/users');
+    const res = await fetch('https://facility-reservation-system-backend.onrender.com/api/users');
     const users = await res.json();
 
     const filtered = users.filter((user) => {
@@ -164,7 +164,7 @@ if (!window.editingUserId) {
   // EDIT EXISTING USER
   if (window.editingUserId) {
 
-    res = await fetch(`http://localhost:3001/api/users/${window.editingUserId}`, {
+    res = await fetch(`https://facility-reservation-system-backend.onrender.com/api/users/${window.editingUserId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -179,7 +179,7 @@ if (!window.editingUserId) {
   } else {
 
     // ADD NEW USER
-    res = await fetch('http://localhost:3001/api/users', {
+    res = await fetch('https://facility-reservation-system-backend.onrender.com/api/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -243,7 +243,7 @@ async function deleteUser(id) {
 
   try {
 
-    const res = await fetch(`http://localhost:3001/api/users/${id}`, {
+    const res = await fetch(`https://facility-reservation-system-backend.onrender.com/api/users/${id}`, {
       method: 'DELETE'
     });
 
@@ -266,7 +266,7 @@ async function deleteUser(id) {
 
 async function editUser(id) {
 
-  const res = await fetch(`http://localhost:3001/api/users/${id}`);
+  const res = await fetch(`https://facility-reservation-system-backend.onrender.com/api/users/${id}`);
   const user = await res.json();
 
   window.editingUserId = id;

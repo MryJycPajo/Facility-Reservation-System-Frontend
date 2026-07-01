@@ -1,6 +1,8 @@
 import { closeModal, escapeHtml, getStatusClass, openModal } from './utils.js';
 
-const API_BASES = ['/api', 'http://localhost:3001/api'];
+const API_BASES = [
+  'https://facility-reservation-system-backend.onrender.com/api'
+];
 
 const addonState = {
   search: '',

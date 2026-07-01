@@ -1,7 +1,7 @@
 import { escapeHtml } from './utils.js';
 import { printReceipt } from './paymentCollection.js';
 
-const API_BASE = 'http://localhost:3001';
+const API_BASE = 'https://facility-reservation-system-backend.onrender.com';
 
 async function fetchHistory() {
   const response = await fetch(`${API_BASE}/api/history`);
@@ -170,7 +170,7 @@ window.reprintReceipt = async function(paymentId) {
     return;
   }
 
-  const res = await fetch(`http://localhost:3001/api/payments/${paymentId}`);
+  const res = await fetch(`https://facility-reservation-system-backend.onrender.com/api/payments/${paymentId}`);
 
   console.log("STATUS:", res.status);
 

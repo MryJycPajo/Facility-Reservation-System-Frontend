@@ -30,12 +30,12 @@ function initLoginForm() {
       return;
     }
 
-    try {
-      const response = await fetch('http://localhost:3001/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_name: username, password })
-      });
+try {
+  const response = await fetch('https://facility-reservation-system-backend.onrender.com/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_name: username, password })
+  });
 
      const data = await response.json();
 

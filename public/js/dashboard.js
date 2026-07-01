@@ -116,7 +116,7 @@ function initPendingClick() {
 
 async function loadPendingCount() {
   try {
-    const res = await fetch('http://localhost:3001/api/reservations/dashboard/pending-count');
+    const res = await fetch('https://facility-reservation-system-backend.onrender.com/api/reservations/dashboard/pending-count');
     const data = await res.json();
 
     const el = document.getElementById('pendingCount');
@@ -199,7 +199,7 @@ if (document.body.dataset.page === 'dashboard') {
   renderOverviewCharts(overviewData?.reservations ?? []);
 
   try {
-    const res = await fetch('http://localhost:3001/api/reservations/recent-confirmed');
+    const res = await fetch('https://facility-reservation-system-backend.onrender.com/api/reservations/recent-confirmed');
     const confirmed = await res.json();
     renderRecentConfirmedTable(Array.isArray(confirmed) ? confirmed : []);
   } catch (err) {

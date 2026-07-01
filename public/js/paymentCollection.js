@@ -1,7 +1,7 @@
 import { buildAddonChecklistHtml, collectSelectedAddonIds, fetchAddonCatalog, getAddonSelectionKey, loadAddonSelection, saveAddonSelection } from './addonUtils.js';
 import { closeModal, escapeHtml, openModal } from './utils.js';
 
-const API_BASES = ['http://localhost:3001'];
+const API_BASES = ['https://facility-reservation-system-backend.onrender.com'];
 const PAYMENT_STORAGE_KEY = 'paymentCollectionRecords';
 
 const paymentState = {

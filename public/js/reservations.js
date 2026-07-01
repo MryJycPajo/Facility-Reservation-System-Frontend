@@ -2,7 +2,7 @@ import { buildAddonChecklistHtml, collectSelectedAddonIds, fetchAddonCatalog, ge
 import { escapeHtml, getStatusClass, formatDateOnly } from './utils.js';
 
 async function fetchReservations() {
-  const res = await fetch('http://localhost:3001/api/reservations');
+  const API_BASE = 'https://facility-reservation-system-backend.onrender.com';
   return await res.json();
 }
 
@@ -138,7 +138,7 @@ document.querySelectorAll('.delete-btn').forEach(btn => {
     if (!confirm('Delete this reservation?')) return;
 
     const response = await fetch(
-      `http://localhost:3001/api/reservations/${id}`,
+      `https://facility-reservation-system-backend.onrender.com/api/reservations/${id}`,
       {
         method: 'DELETE'
       }
@@ -182,23 +182,23 @@ async function saveReservation() {
 
   if (window.editingReservationId) {
 
-    response = await fetch(
-      `http://localhost:3001/api/reservations/${window.editingReservationId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reservation)
-      }
-    );
+response = await fetch(
+  `https://facility-reservation-system-backend.onrender.com/api/reservations/${window.editingReservationId}`,
+  {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(reservation)
+  }
+);
 
     window.editingReservationId = null;
 
   } else {
 
     response = await fetch(
-      'http://localhost:3001/api/reservations',
+      'https://facility-reservation-system-backend.onrender.com/api/reservations',
       {
         method: 'POST',
         headers: {
@@ -234,7 +234,7 @@ async function saveReservation() {
 }
 async function editReservation(id) {
 
-  const res = await fetch('http://localhost:3001/api/reservations');
+  const res = await fetch('https://facility-reservation-system-backend.onrender.com/api/reservations');
   const reservations = await res.json();
 
   const reservation = reservations.find(
@@ -283,7 +283,7 @@ async function loadFacilitiesDropdown() {
   const select = document.getElementById('newResFacility');
   if (!select) return;
 
-  const res = await fetch('http://localhost:3001/api/facilities');
+  const res = await fetch('https://facility-reservation-system-backend.onrender.com/api/facilities');
   const facilities = await res.json();
 
   select.innerHTML =

@@ -1,6 +1,6 @@
 import { escapeHtml, getStatusClass } from './utils.js';
 
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = 'https://facility-reservation-system-backend.onrender.com/api';
 
 let overviewCalendar = null;
 

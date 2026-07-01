@@ -1,4 +1,4 @@
-const API_BASES = ['http://localhost:3001/api'];
+const API_BASES = ['https://facility-reservation-system-backend.onrender.com'];
 const ADDON_SELECTION_STORAGE_KEY = 'facilityAddonSelections';
 
 function parseSelectedIds(value) {

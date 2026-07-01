@@ -10,7 +10,7 @@ export async function renderFacilitiesTable() {
   if (!tbody) return;
 
   try {
-    const res = await fetch('http://localhost:3001/api/facilities');
+    const res = await fetch('https://facility-reservation-system-backend.onrender.com/api/facilities');
     const facilities = await res.json();
 
     const filtered = facilities.filter((f) => {
@@ -99,7 +99,7 @@ export function initFacilityModal() {
       let res;
 
       if (window.editingFacilityId) {
-        res = await fetch(`http://localhost:3001/api/facilities/${window.editingFacilityId}`, {
+        res = await fetch(`https://facility-reservation-system-backend.onrender.com/api/facilities/${window.editingFacilityId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -113,7 +113,7 @@ export function initFacilityModal() {
 
       } else {
         
-        res = await fetch('http://localhost:3001/api/facilities', {
+        res = await fetch('https://facility-reservation-system-backend.onrender.com/api/facilities', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -145,7 +145,7 @@ async function deleteFacility(id) {
   const ok = confirm('Delete this facility?');
   if (!ok) return;
 
-  await fetch(`http://localhost:3001/api/facilities/${id}`, {
+  await fetch(`https://facility-reservation-system-backend.onrender.com/api/facilities/${id}`, {
     method: 'DELETE'
   });
 
@@ -153,7 +153,7 @@ async function deleteFacility(id) {
 }
 
 async function editFacility(id) {
-  const res = await fetch(`http://localhost:3001/api/facilities/${id}`);
+  const res = await fetch(`https://facility-reservation-system-backend.onrender.com/api/facilities/${id}`);
   const f = await res.json();
 
   document.getElementById('newFacilityName').value = f.fac_name;
