@@ -3,9 +3,15 @@ import { escapeHtml, getStatusClass, formatDateOnly } from './utils.js';
 
 async function fetchReservations() {
   const API_BASE = 'https://facility-reservation-system-backend.onrender.com';
+
+  const res = await fetch(`${API_BASE}/api/reservations`);
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch reservations: ${res.status}`);
+  }
+
   return await res.json();
 }
-
 const reservationState = {
   search: '',
   status: 'all'
