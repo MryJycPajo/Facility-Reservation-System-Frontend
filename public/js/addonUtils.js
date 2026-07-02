@@ -102,7 +102,7 @@ export async function fetchAddonCatalog({ activeOnly = true } = {}) {
 
   for (const base of API_BASES) {
     try {
-      const response = await fetch(`${base}/addons${query}`);
+      const response = await fetch(`${base}/api/addons${query}`);
       if (!response.ok) {
         const text = await response.text().catch(() => '');
         lastError = new Error(text || `Request failed with status ${response.status}`);
